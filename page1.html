@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTICLE_TITLE_HERE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--red:#C0392B;--dark:#111;--mid:#444;--light:#f9f7f4;--border:#e0dbd3}
+  body{font-family:'Source Serif 4',serif;background:var(--light);color:var(--dark)}
+  header{background:#fff;border-bottom:3px solid var(--red);padding:0 40px}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding:18px 0 12px}
+  .logo{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;letter-spacing:-1px;color:var(--dark)}
+  .logo span{color:var(--red)}
+  .date{font-size:12px;color:#888;letter-spacing:2px;text-transform:uppercase}
+  nav{border-top:1px solid var(--border);padding:10px 0;display:flex;gap:28px}
+  nav a{text-decoration:none;color:var(--mid);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Source Serif 4',serif}
+  nav a:hover{color:var(--red)}
+  .container{max-width:860px;margin:0 auto;padding:50px 20px}
+  .category-tag{display:inline-block;background:var(--red);color:#fff;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;margin-bottom:20px;font-weight:600}
+  h1{font-family:'Playfair Display',serif;font-size:46px;font-weight:900;line-height:1.15;margin-bottom:20px;color:var(--dark)}
+  .meta{display:flex;align-items:center;gap:20px;padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:36px}
+  .author-avatar{width:38px;height:38px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px}
+  .meta-text{font-size:13px;color:#777}
+  .meta-text strong{color:var(--dark)}
+  .featured-img{width:100%;height:380px;object-fit:cover;background:linear-gradient(135deg,#2c3e50,#3498db);margin-bottom:36px;display:flex;align-items:center;justify-content:center}
+  .article-body{font-size:18px;line-height:1.85;color:#333}
+  .article-body p{margin-bottom:24px}
+  .article-body h2{font-family:'Playfair Display',serif;font-size:28px;margin:40px 0 16px;color:var(--dark)}
+  .article-body h3{font-size:20px;margin:30px 0 12px;font-weight:600}
+  blockquote{border-left:4px solid var(--red);padding:16px 24px;margin:32px 0;background:#fff;font-style:italic;font-size:20px;color:var(--mid)}
+  .tags{margin-top:40px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px}
+  .tag{padding:6px 14px;border:1px solid var(--border);font-size:12px;color:var(--mid);text-decoration:none;letter-spacing:1px}
+  footer{background:var(--dark);color:#aaa;text-align:center;padding:30px;font-size:13px;margin-top:60px}
+  footer a{color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo">Deutsche<span>Post</span></div>
+    <div class="date">12. März 2026</div>
+  </div>
+  <nav>
+    <a href="#">Startseite</a>
+    <a href="#">Deutschland</a>
+    <a href="#">Wirtschaft</a>
+    <a href="#">Technik</a>
+    <a href="#">Lifestyle</a>
+    <a href="#">Kontakt</a>
+  </nav>
+</header>
+<div class="container">
+  <span class="category-tag">Wirtschaft</span>
+  <h1>ARTICLE_TITLE_HERE</h1>
+  <div class="meta">
+    <div class="author-avatar">R</div>
+    <div class="meta-text">Von <strong>Redaktion</strong> &nbsp;|&nbsp; 12. März 2026 &nbsp;|&nbsp; 6 Min. Lesezeit</div>
+  </div>
+  <div class="featured-img"></div>
+  <div class="article-body">
+    ARTICLE_CONTENT_HERE
+  </div>
+  <div class="tags">
+    <a href="#" class="tag">Deutschland</a>
+    <a href="#" class="tag">Wirtschaft</a>
+    <a href="#" class="tag">News</a>
+  </div>
+</div>
+<footer>
+  &copy; 2026 DeutschePost Blog &nbsp;|&nbsp; <a href="#">Impressum</a> &nbsp;|&nbsp; <a href="#">Datenschutz</a>
+</footer>
+</body>
+</html>
