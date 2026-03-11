@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — DeutschBlog</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#C0392B;--dark:#111;--bg:#F0F2F5;--white:#fff;--border:#E0E0E0;--green:#27AE60;--blue:#2980B9}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460)}
+.login-box{background:var(--white);padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-logo{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.login-title{font-size:28px;font-weight:700;margin-bottom:32px;color:var(--dark)}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px}
+.field input{width:100%;padding:12px 16px;border:1.5px solid var(--border);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border 0.2s}
+.field input:focus{border-color:var(--red)}
+.login-btn{width:100%;padding:14px;background:var(--red);color:#fff;border:none;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s}
+.login-btn:hover{opacity:0.9}
+.login-err{color:var(--red);font-size:13px;margin-top:12px;display:none;font-weight:500}
+
+/* ADMIN PANEL */
+.admin-wrap{display:none;min-height:100vh}
+.admin-header{background:var(--dark);color:#fff;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.admin-logo{font-size:16px;font-weight:700;letter-spacing:-0.5px}
+.admin-logo span{color:var(--red)}
+.admin-nav{display:flex;gap:8px;align-items:center}
+.admin-nav button{background:transparent;border:1px solid #444;color:#ccc;padding:6px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.admin-nav button:hover,.admin-nav button.active{background:var(--red);border-color:var(--red);color:#fff}
+.logout-btn{background:transparent;border:none;color:#888;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;padding:6px 12px}
+.logout-btn:hover{color:#fff}
+
+.admin-body{max-width:1100px;margin:0 auto;padding:32px 24px}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.panel-title span{background:var(--red);color:#fff;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* EDITOR */
+.editor-grid{display:grid;grid-template-columns:1fr 280px;gap:24px}
+.editor-main{background:var(--white);padding:28px;border:1px solid var(--border)}
+.editor-side{display:flex;flex-direction:column;gap:16px}
+.side-box{background:var(--white);padding:20px;border:1px solid var(--border)}
+.side-box h3{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.form-field{margin-bottom:20px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border 0.2s;background:var(--bg)}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--red);background:#fff}
+#post-content{min-height:380px;resize:vertical;line-height:1.7;font-size:14px}
+.title-input{font-size:22px;font-weight:700;border:none!important;background:transparent!important;padding:0!important;width:100%;outline:none;font-family:'Inter',sans-serif;margin-bottom:16px;color:var(--dark)}
+.title-input::placeholder{color:#ccc}
+.title-sep{height:2px;background:linear-gradient(to right,var(--red),transparent);margin-bottom:20px}
+.toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.toolbar button{background:var(--bg);border:1px solid var(--border);padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.toolbar button:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
+.publish-btn{width:100%;padding:14px;background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.5px;margin-bottom:8px;transition:opacity 0.2s}
+.publish-btn:hover{opacity:0.9}
+.draft-btn{width:100%;padding:10px;background:var(--bg);color:var(--dark);border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.draft-btn:hover{border-color:var(--dark)}
+.success-msg{background:#d4edda;color:#155724;padding:12px 16px;font-size:13px;font-weight:600;margin-top:8px;display:none;border-left:4px solid var(--green)}
+
+/* POSTS LIST */
+.posts-table{background:var(--white);border:1px solid var(--border);overflow:hidden}
+.posts-table-header{display:grid;grid-template-columns:1fr 140px 120px 100px;padding:12px 20px;background:var(--bg);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888}
+.post-row{display:grid;grid-template-columns:1fr 140px 120px 100px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background 0.15s}
+.post-row:hover{background:#fafafa}
+.post-row:last-child{border-bottom:none}
+.post-row-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.post-row-excerpt{font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px}
+.post-row-date{font-size:12px;color:#888}
+.post-row-cat{font-size:11px;background:#EEF2FF;color:#4338CA;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block}
+.row-actions{display:flex;gap:6px}
+.edit-btn{background:var(--blue);color:#fff;border:none;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.del-btn{background:var(--red);color:#fff;border:none;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.empty-posts{text-align:center;padding:60px;color:#aaa;font-size:14px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);padding:24px;border:1px solid var(--border);border-top:3px solid var(--red)}
+.stat-num{font-size:36px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.stat-label{font-size:12px;color:#888;font-weight:500;letter-spacing:0.5px;text-transform:uppercase}
+.view-site-btn{display:inline-flex;align-items:center;gap:6px;background:var(--dark);color:#fff;padding:8px 18px;text-decoration:none;font-size:13px;font-weight:600;transition:background 0.2s}
+.view-site-btn:hover{background:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">DeutschBlog</div>
+    <div class="login-title">Admin Login</div>
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" id="pw-input" placeholder="Passwort eingeben..." onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Anmelden</button>
+    <div class="login-err" id="login-err">❌ Falsches Passwort!</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-wrap" id="admin-panel">
+  <div class="admin-header">
+    <div class="admin-logo">Deutsch<span>Blog</span> Admin</div>
+    <div class="admin-nav">
+      <button class="active" onclick="showPanel('dashboard',this)">📊 Dashboard</button>
+      <button onclick="showPanel('new-post',this)">✏️ Neuer Artikel</button>
+      <button onclick="showPanel('all-posts',this)">📋 Alle Artikel</button>
+      <a href="index.html" target="_blank" class="view-site-btn">🌐 Website</a>
+      <button class="logout-btn" onclick="logout()">Abmelden</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="panel-title"><span>📊</span> Dashboard</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Artikel gesamt</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-today">0</div>
+          <div class="stat-label">Heute veröffentlicht</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-cats">0</div>
+          <div class="stat-label">Kategorien</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px;background:var(--white);border:1px solid var(--border)">
+        <div style="font-size:32px;margin-bottom:12px">✍️</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px">Bereit zum Schreiben?</div>
+        <div style="font-size:14px;color:#888;margin-bottom:20px">Erstelle deinen nächsten Artikel</div>
+        <button class="publish-btn" style="width:auto;padding:12px 32px" onclick="showPanel('new-post',document.querySelector('.admin-nav button:nth-child(2)'))">Neuen Artikel erstellen →</button>
+      </div>
+    </div>
+
+    <!-- NEW POST -->
+    <div class="panel" id="panel-new-post">
+      <div class="panel-title"><span>✏️</span> <span id="editor-mode-title">Neuer Artikel</span></div>
+      <div class="editor-grid">
+        <div class="editor-main">
+          <input class="title-input" type="text" id="post-title" placeholder="Artikeltitel eingeben...">
+          <div class="title-sep"></div>
+          <div class="toolbar">
+            <button onclick="fmt('bold')"><b>B</b></button>
+            <button onclick="fmt('italic')"><i>I</i></button>
+            <button onclick="wrapTag('h2')">H2</button>
+            <button onclick="wrapTag('h3')">H3</button>
+            <button onclick="wrapTag('blockquote')">❝</button>
+            <button onclick="insertLink()">🔗 Link</button>
+            <button onclick="wrapTag('ul')">Liste</button>
+          </div>
+          <div class="form-field">
+            <textarea id="post-content" placeholder="Artikelinhalt hier schreiben... HTML ist erlaubt.&#10;&#10;Beispiel:&#10;&lt;p&gt;Ihr Artikel hier...&lt;/p&gt;&#10;&lt;h2&gt;Zwischenüberschrift&lt;/h2&gt;&#10;&lt;p&gt;Mehr Inhalt...&lt;/p&gt;&#10;&lt;p&gt;Hier ist der &lt;a href=&quot;https://example.com&quot;&gt;Link Text&lt;/a&gt;&lt;/p&gt;"></textarea>
+          </div>
+        </div>
+        <div class="editor-side">
+          <div class="side-box">
+            <h3>Veröffentlichen</h3>
+            <button class="publish-btn" onclick="publishPost()">🚀 Veröffentlichen</button>
+            <button class="draft-btn" onclick="clearEditor()">✖ Abbrechen</button>
+            <div class="success-msg" id="success-msg">✅ Artikel veröffentlicht!</div>
+          </div>
+          <div class="side-box">
+            <h3>Details</h3>
+            <div class="form-field">
+              <label>Kategorie</label>
+              <select id="post-cat">
+                <option>Deutschland</option>
+                <option>Wirtschaft</option>
+                <option>Technik</option>
+                <option>Lifestyle</option>
+                <option>Reisen</option>
+                <option>Ratgeber</option>
+                <option>Sport</option>
+                <option>Kultur</option>
+                <option>Politik</option>
+                <option>Sonstiges</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Autor</label>
+              <input type="text" id="post-author" placeholder="Redaktion" value="Redaktion">
+            </div>
+          </div>
+          <div class="side-box">
+            <h3>Vorschau</h3>
+            <div id="preview-title" style="font-size:13px;font-weight:700;margin-bottom:6px;color:#333">—</div>
+            <div id="preview-excerpt" style="font-size:11px;color:#aaa;line-height:1.5">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL POSTS -->
+    <div class="panel" id="panel-all-posts">
+      <div class="panel-title"><span>📋</span> Alle Artikel</div>
+      <div class="posts-table">
+        <div class="posts-table-header">
+          <div>Titel</div>
+          <div>Datum</div>
+          <div>Kategorie</div>
+          <div>Aktionen</div>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PASS = 'germanadmin00#hamzauthority1';
+let editingId = null;
+
+// LOGIN
+function doLogin() {
+  const val = document.getElementById('pw-input').value;
+  if (val === PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadDashboard();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+function logout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+}
+
+// PANELS
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'all-posts') loadPostsList();
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'new-post') { editingId = null; clearEditor(); }
+}
+
+// STORAGE
+function getPosts() { return JSON.parse(localStorage.getItem('db_posts') || '[]'); }
+function savePosts(posts) { localStorage.setItem('db_posts', JSON.stringify(posts)); }
+
+// PUBLISH
+function publishPost() {
+  const title = document.getElementById('post-title').value.trim();
+  const content = document.getElementById('post-content').value.trim();
+  if (!title || !content) { alert('Bitte Titel und Inhalt eingeben!'); return; }
+  const posts = getPosts();
+  if (editingId) {
+    const idx = posts.findIndex(p => p.id == editingId);
+    if (idx > -1) { posts[idx].title = title; posts[idx].content = content; posts[idx].category = document.getElementById('post-cat').value; posts[idx].author = document.getElementById('post-author').value; }
+  } else {
+    posts.push({ id: Date.now(), title, content, category: document.getElementById('post-cat').value, author: document.getElementById('post-author').value || 'Redaktion', date: new Date().toISOString() });
+  }
+  savePosts(posts);
+  const msg = document.getElementById('success-msg');
+  msg.textContent = editingId ? '✅ Artikel aktualisiert!' : '✅ Artikel veröffentlicht!';
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; clearEditor(); }, 2000);
+  editingId = null;
+}
+
+function clearEditor() {
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-cat').value = 'Deutschland';
+  document.getElementById('post-author').value = 'Redaktion';
+  document.getElementById('preview-title').textContent = '—';
+  document.getElementById('preview-excerpt').textContent = '—';
+  document.getElementById('editor-mode-title').textContent = 'Neuer Artikel';
+  editingId = null;
+}
+
+// LIVE PREVIEW
+document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('post-title');
+  const contentEl = document.getElementById('post-content');
+  if (titleEl) titleEl.addEventListener('input', () => {
+    document.getElementById('preview-title').textContent = titleEl.value || '—';
+  });
+  if (contentEl) contentEl.addEventListener('input', () => {
+    const text = contentEl.value.replace(/<[^>]+>/g,'').substring(0,80);
+    document.getElementById('preview-excerpt').textContent = text ? text + '...' : '—';
+  });
+});
+
+// TOOLBAR
+function fmt(cmd) {
+  const ta = document.getElementById('post-content');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e);
+  const tag = cmd === 'bold' ? 'strong' : 'em';
+  const wrapped = `<${tag}>${sel}</${tag}>`;
+  ta.value = ta.value.substring(0, s) + wrapped + ta.value.substring(e);
+}
+function wrapTag(tag) {
+  const ta = document.getElementById('post-content');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e) || 'Text hier';
+  const wrapped = tag === 'ul' ? `<ul>\n  <li>${sel}</li>\n</ul>` : `<${tag}>${sel}</${tag}>`;
+  ta.value = ta.value.substring(0, s) + wrapped + ta.value.substring(e);
+}
+function insertLink() {
+  const url = prompt('URL eingeben:');
+  if (!url) return;
+  const ta = document.getElementById('post-content');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e) || 'Link Text';
+  const link = `<a href="${url}">${sel}</a>`;
+  ta.value = ta.value.substring(0, s) + link + ta.value.substring(e);
+}
+
+// POSTS LIST
+function loadPostsList() {
+  const posts = getPosts();
+  const el = document.getElementById('posts-list');
+  if (!posts.length) { el.innerHTML = '<div class="empty-posts">Noch keine Artikel vorhanden.</div>'; return; }
+  el.innerHTML = posts.slice().reverse().map(p => {
+    const date = new Date(p.date).toLocaleDateString('de-DE');
+    const excerpt = p.content.replace(/<[^>]+>/g,'').substring(0,60);
+    return `<div class="post-row">
+      <div><div class="post-row-title">${p.title}</div><div class="post-row-excerpt">${excerpt}...</div></div>
+      <div class="post-row-date">${date}</div>
+      <div><span class="post-row-cat">${p.category || 'Deutschland'}</span></div>
+      <div class="row-actions">
+        <button class="edit-btn" onclick="editPost(${p.id})">✏ Edit</button>
+        <button class="del-btn" onclick="deletePost(${p.id})">✕ Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editPost(id) {
+  const post = getPosts().find(p => p.id == id);
+  if (!post) return;
+  editingId = id;
+  document.getElementById('post-title').value = post.title;
+  document.getElementById('post-content').value = post.content;
+  document.getElementById('post-cat').value = post.category || 'Deutschland';
+  document.getElementById('post-author').value = post.author || 'Redaktion';
+  document.getElementById('editor-mode-title').textContent = 'Artikel bearbeiten';
+  document.getElementById('preview-title').textContent = post.title;
+  showPanel('new-post', document.querySelector('.admin-nav button:nth-child(2)'));
+}
+
+function deletePost(id) {
+  if (!confirm('Artikel wirklich löschen?')) return;
+  savePosts(getPosts().filter(p => p.id != id));
+  loadPostsList();
+  loadDashboard();
+}
+
+// DASHBOARD
+function loadDashboard() {
+  const posts = getPosts();
+  document.getElementById('stat-total').textContent = posts.length;
+  const today = new Date().toDateString();
+  document.getElementById('stat-today').textContent = posts.filter(p => new Date(p.date).toDateString() === today).length;
+  const cats = new Set(posts.map(p => p.category));
+  document.getElementById('stat-cats').textContent = cats.size;
+}
+</script>
+</body>
+</html>
