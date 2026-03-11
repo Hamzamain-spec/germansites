@@ -1,9 +1,141 @@
 <!DOCTYPE html>
-<html>
-<head><title>German Blog</title></head>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeutschBlog — Nachrichten & Ratgeber</title>
+<meta name="description" content="Aktuelle Artikel, Ratgeber und Nachrichten aus Deutschland.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#C0392B;--dark:#111;--mid:#555;--bg:#F8F6F2;--white:#fff;--border:#E5E0D8}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark)}
+
+/* HEADER */
+header{background:var(--white);border-bottom:3px solid var(--red);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--dark);text-decoration:none;letter-spacing:-0.5px}
+.logo span{color:var(--red)}
+nav{display:flex;gap:8px}
+nav a{text-decoration:none;color:var(--mid);font-size:13px;font-weight:500;padding:6px 14px;border-radius:4px;transition:all 0.2s}
+nav a:hover{background:var(--red);color:#fff}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:80px 24px;text-align:center}
+.hero-tag{display:inline-block;background:var(--red);font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:5px 16px;margin-bottom:24px;font-weight:600}
+.hero h1{font-family:'Playfair Display',serif;font-size:58px;font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:20px}
+.hero p{font-size:17px;color:rgba(255,255,255,0.7);max-width:500px;margin:0 auto 36px;line-height:1.7;font-weight:300}
+.hero-btn{display:inline-block;background:var(--red);color:#fff;padding:14px 32px;text-decoration:none;font-weight:600;font-size:14px;letter-spacing:0.5px;transition:transform 0.2s}
+.hero-btn:hover{transform:translateY(-2px)}
+
+/* POSTS GRID */
+.section{max-width:1200px;margin:60px auto;padding:0 24px}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;margin-bottom:8px}
+.section-line{width:48px;height:3px;background:var(--red);margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:28px}
+.card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.12)}
+.card-img{height:200px;background:linear-gradient(135deg,#667eea,#764ba2);position:relative}
+.card-cat{position:absolute;bottom:12px;left:12px;background:var(--red);color:#fff;font-size:10px;letter-spacing:2px;padding:4px 10px;font-weight:600;text-transform:uppercase}
+.card-body{padding:24px}
+.card-date{font-size:11px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.card-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;line-height:1.3;margin-bottom:12px;color:var(--dark)}
+.card-excerpt{font-size:14px;color:var(--mid);line-height:1.7;font-weight:300;margin-bottom:16px}
+.card-link{font-size:13px;font-weight:600;color:var(--red);text-decoration:none;letter-spacing:0.5px}
+.card-link:hover{text-decoration:underline}
+
+/* COLORS FOR CARD IMGS */
+.color-1{background:linear-gradient(135deg,#667eea,#764ba2)}
+.color-2{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.color-3{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.color-4{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.color-5{background:linear-gradient(135deg,#fa709a,#fee140)}
+.color-6{background:linear-gradient(135deg,#a18cd1,#fbc2eb)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:80px 24px;color:var(--mid)}
+.empty h3{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:12px;color:var(--dark)}
+.empty p{font-size:15px;font-weight:300}
+
+/* FOOTER */
+footer{background:var(--dark);color:#666;text-align:center;padding:40px 24px;margin-top:80px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:16px}
+.footer-logo span{color:var(--red)}
+footer p{font-size:13px;margin-bottom:8px}
+footer a{color:#888;text-decoration:none}
+footer a:hover{color:var(--red)}
+.admin-link{position:fixed;bottom:20px;right:20px;background:var(--dark);color:#fff;padding:10px 18px;font-size:12px;text-decoration:none;border-radius:4px;opacity:0.5;transition:opacity 0.2s;font-weight:500}
+.admin-link:hover{opacity:1}
+</style>
+</head>
 <body>
-<h1>Willkommen</h1>
-<p>Messestand Frankfurt artikel content here.</p>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">Deutsch<span>Blog</span></a>
+    <nav>
+      <a href="index.html">Startseite</a>
+      <a href="index.html">Artikel</a>
+      <a href="index.html">Deutschland</a>
+      <a href="index.html">Wirtschaft</a>
+      <a href="index.html">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Willkommen</div>
+  <h1>Nachrichten &<br>Ratgeber</h1>
+  <p>Aktuelle Artikel, Tipps und Informationen aus Deutschland — täglich aktualisiert.</p>
+  <a href="#posts" class="hero-btn">Alle Artikel lesen →</a>
+</div>
+
+<div class="section" id="posts">
+  <div class="section-title">Aktuelle Artikel</div>
+  <div class="section-line"></div>
+  <div class="grid" id="posts-grid">
+    <div class="empty">
+      <h3>Noch keine Artikel</h3>
+      <p>Die ersten Beiträge erscheinen in Kürze.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Deutsch<span>Blog</span></div>
+  <p>&copy; 2026 DeutschBlog — Nachrichten aus Deutschland</p>
+  <p><a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></p>
+</footer>
+
+<a href="admin.html" class="admin-link">⚙ Admin</a>
+
+<script>
+const colors = ['color-1','color-2','color-3','color-4','color-5','color-6'];
+
+function loadPosts() {
+  const posts = JSON.parse(localStorage.getItem('db_posts') || '[]');
+  const grid = document.getElementById('posts-grid');
+  if (!posts.length) return;
+  grid.innerHTML = '';
+  posts.slice().reverse().forEach((p, i) => {
+    const color = colors[i % colors.length];
+    const date = new Date(p.date).toLocaleDateString('de-DE', {day:'numeric',month:'long',year:'numeric'});
+    const excerpt = p.content.replace(/<[^>]+>/g,'').substring(0, 120) + '...';
+    grid.innerHTML += `
+      <div class="card" onclick="location.href='post.html?id=${p.id}'">
+        <div class="card-img ${color}">
+          <span class="card-cat">${p.category || 'Deutschland'}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-date">${date}</div>
+          <div class="card-title">${p.title}</div>
+          <div class="card-excerpt">${excerpt}</div>
+          <a class="card-link" href="post.html?id=${p.id}">Weiterlesen →</a>
+        </div>
+      </div>`;
+  });
+}
+loadPosts();
+</script>
 </body>
 </html>
-
