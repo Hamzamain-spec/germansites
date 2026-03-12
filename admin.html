@@ -246,6 +246,7 @@ Beispiel:
 <script>
 var PASS = 'germanadmin00#hamzauthority1';
 var TOKEN = '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';
+var DEFAULT_OWNER = 'Hamzamain-spec';
 var owner = '';
 var repo = '';
 var branch = 'main';
@@ -285,7 +286,7 @@ function show(name, btn) {
 
 function ghH() {
   return {
-    'Authorization': 'token ' + TOKEN,
+    'Authorization': 'Bearer ' + TOKEN,
     'Content-Type': 'application/json',
     'Accept': 'application/vnd.github.v3+json'
   };
@@ -307,6 +308,35 @@ function saveCfg() {
   updateRBox();
   var m = document.getElementById('CFGMSG');
   setMsg(m, 'ld', 'Teste Verbindung...');
+  testGH().then(function (res) {
+    setMsg(m, res.ok ? 'ok' : 'er', res.ok ? '✅ Verbunden!' : '❌ ' + res.msg);
+    if (res.ok) { checkGH(); syncLegacyPostsToGithub(); }
+  });
+}
+
+function detectRepoFromLocation() {
+  var host = (window.location.hostname || '').toLowerCase();
+  var path = (window.location.pathname || '').split('/').filter(Boolean);
+  var out = { owner: '', repo: '' };
+
+  // Reliable auto-detection works on GitHub Pages style URLs.
+  if (host.endsWith('.github.io')) {
+    out.owner = host.replace('.github.io', '');
+    out.repo = path.length ? path[0] : '';
+  }
+
+  return out;
+}
+
+function bootstrapCfg() {
+  var saved = JSON.parse(localStorage.getItem('__ghcfg__') || '{}');
+  var detected = detectRepoFromLocation();
+  owner = saved.owner || detected.owner || DEFAULT_OWNER;
+  repo = saved.repo || detected.repo || repo;
+  branch = saved.branch || branch || 'main';
+  if (owner && repo) saveCfgLocal();
+}
+
   testGH().then(function (ok) {
     setMsg(m, ok ? 'ok' : 'er', ok ? '✅ Verbunden!' : '❌ Fehler — Owner/Repo/Token prüfen');
     if (ok) { checkGH(); syncLegacyPostsToGithub(); }
@@ -320,12 +350,25 @@ function updateRBox() {
     : '<span style="color:#EF4444">Nicht erkannt — ⚙ Repo Tab</span>';
 }
 
+function testGH() {
+  return fetch(apiBase(), { headers: ghH() })
+    .then(function (r) {
+      if (r.ok) return { ok: true, msg: 'Verbunden mit ' + owner + '/' + repo };
+      return r.json().catch(function () { return {}; }).then(function (e) {
+        return { ok: false, msg: (e.message || 'Fehler — Owner/Repo/Token prüfen') + ' (HTTP ' + r.status + ')' };
+      });
+    })
+    .catch(function () { return { ok: false, msg: 'Netzwerkfehler beim GitHub-Check' }; });
+}
 function testGH() { return fetch(apiBase(), { headers: ghH() }).then(function (r) { return r.ok; }).catch(function () { return false; }); }
 function checkGH() {
   var dot = document.getElementById('GD');
   var txt = document.getElementById('GT');
   if (!owner || !repo) { dot.className = 'gd er'; txt.textContent = 'Repository nicht konfiguriert — ⚙ Repo'; return; }
   dot.className = 'gd sp'; txt.textContent = 'Prüfe Verbindung...';
+  testGH().then(function (res) {
+    dot.className = 'gd ' + (res.ok ? 'ok' : 'er');
+    txt.textContent = res.ok ? '✅ Verbunden mit ' + owner + '/' + repo : '❌ ' + res.msg;
   testGH().then(function (ok) {
     dot.className = 'gd ' + (ok ? 'ok' : 'er');
     txt.textContent = ok ? '✅ Verbunden mit ' + owner + '/' + repo : '❌ Keine Verbindung — Token oder Repo prüfen';
@@ -333,6 +376,7 @@ function checkGH() {
 }
 
 function initAdmin() {
+  bootstrapCfg();
   var saved = JSON.parse(localStorage.getItem('__ghcfg__') || '{}');
   if (saved.owner && saved.repo) {
     owner = saved.owner; repo = saved.repo; branch = saved.branch || 'main';
@@ -381,6 +425,7 @@ function buildPost(title, content, cat, author, date, sl) {
   var mins = Math.max(1, Math.round(words / 200));
   var desc = content.replace(/<[^>]+>/g, '').slice(0, 150).replace(/"/g, '&quot;');
   var dFmt = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+  return '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + ' - DeutschBlog</title><meta name="description" content="' + desc + '"><link rel="canonical" href="https://' + owner + '.github.io/' + repo + '/posts/' + sl + '.html"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--red:#C0392B;--dark:#111;--mid:#555;--bg:#F8F6F2;--white:#fff;--border:#E5E0D8}body{font-family:\'Inter\',sans-serif;background:var(--bg);color:var(--dark)}header{background:var(--white);border-bottom:3px solid var(--red);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}.logo{font-family:\'Playfair Display\',serif;font-size:26px;font-weight:900;color:var(--dark);text-decoration:none}.logo span{color:var(--red)}nav a{text-decoration:none;color:var(--mid);font-size:13px;font-weight:500;padding:6px 14px;border-radius:4px;margin-left:4px;transition:all 0.2s}nav a:hover{background:var(--red);color:#fff}.post-hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:60px 24px 50px;text-align:center}.post-cat{display:inline-block;background:var(--red);font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:4px 14px;margin-bottom:20px;font-weight:600}.post-title{font-family:\'Playfair Display\',serif;font-size:48px;font-weight:900;line-height:1.15;letter-spacing:-1.5px;max-width:800px;margin:0 auto 20px}.post-meta{font-size:13px;color:rgba(255,255,255,0.6);letter-spacing:0.5px}.post-meta span{color:rgba(255,255,255,0.9);font-weight:500}.container{max-width:760px;margin:60px auto;padding:0 24px 80px}.article-body{font-size:18px;line-height:1.9;color:#333;font-weight:300}.article-body p{margin-bottom:26px}.article-body h2{font-family:\'Playfair Display\',serif;font-size:32px;font-weight:700;color:var(--dark);margin:48px 0 18px;letter-spacing:-0.5px}.article-body h3{font-size:20px;font-weight:600;color:var(--dark);margin:32px 0 12px}.article-body a{color:var(--red);text-decoration:underline;text-underline-offset:3px}.article-body ul,.article-body ol{padding-left:24px;margin-bottom:24px}.article-body li{margin-bottom:8px;line-height:1.7}blockquote{border-left:4px solid var(--red);padding:20px 28px;margin:36px 0;background:var(--white);font-style:italic;font-size:20px;color:var(--mid)}.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--mid);text-decoration:none;font-size:13px;font-weight:500;margin-bottom:40px;padding:8px 0;border-bottom:1px solid var(--border)}.back-btn:hover{color:var(--red)}footer{background:var(--dark);color:#666;text-align:center;padding:40px 24px}.footer-logo{font-family:\'Playfair Display\',serif;font-size:22px;color:#fff;margin-bottom:12px}.footer-logo span{color:var(--red)}footer p{font-size:13px}footer a{color:#888;text-decoration:none}@media (max-width:720px){.post-title{font-size:35px}}</style></head><body><header><div class="header-inner"><a href="../index.html" class="logo">Deutsch<span>Blog</span></a><nav><a href="../index.html">← Zurück</a><a href="../index.html">Startseite</a></nav></div></header><div class="post-hero"><div class="post-cat">' + cat + '</div><h1 class="post-title">' + title + '</h1><div class="post-meta">Von <span>' + author + '</span> &nbsp;·&nbsp; <span>' + dFmt + '</span> &nbsp;·&nbsp; <span>' + mins + ' Min. Lesezeit</span></div></div><div class="container"><a href="../index.html" class="back-btn">← Alle Artikel</a><div class="article-body"><article>' + content + '</article></div></div><footer><div class="footer-logo">Deutsch<span>Blog</span></div><p>&copy; 2026 DeutschBlog &nbsp;·&nbsp; <a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></p></footer></body></html>';
   return '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + title + ' - DeutschBlog</title><meta name="description" content="' + desc + '"><link rel="canonical" href="https://' + owner + '.github.io/' + repo + '/posts/' + sl + '.html"></head><body style="font-family:Inter,sans-serif;max-width:860px;margin:0 auto;padding:24px;line-height:1.8"><p><a href="../index.html">← Zurück zur Startseite</a></p><h1>' + title + '</h1><p><strong>' + cat + '</strong> · ' + dFmt + ' · ' + author + ' · ' + mins + ' Min. Lesezeit</p><article>' + content + '</article></body></html>';
 }
 
