@@ -113,36 +113,23 @@ footer a:hover{color:var(--red)}
 <script>
 const colors = ['color-1','color-2','color-3','color-4','color-5','color-6'];
 const SITE_NAME = 'deutschblog';
+const GIST_ID = '42ea11087f40fdba423f8eb0f575ac96'; // Same Gist for all sites!
 
 async function loadPosts() {
   const grid = document.getElementById('posts-grid');
   
   try {
-    // Get Gist ID from localStorage (set by admin)
-    const saved = localStorage.getItem('gist_config_deutsch');
-    let gistId = '';
-    if (saved) {
-      const config = JSON.parse(saved);
-      gistId = config.gistId;
-    }
-    
-    if (!gistId) {
-      console.log('No Gist ID found in localStorage');
-      grid.innerHTML = '<div class="empty"><h3>Konfiguration fehlt</h3><p>Bitte zuerst Gist im Admin konfigurieren.</p></div>';
-      return;
-    }
-    
-    console.log('Fetching from Gist ID:', gistId);
+    console.log('Fetching from Gist ID:', GIST_ID);
     
     // Use raw URL - this ALWAYS works!
-    const rawUrl = `https://gist.githubusercontent.com/Hamzamain-spec/${gistId}/raw/posts.json`;
+    const rawUrl = `https://gist.githubusercontent.com/Hamzamain-spec/${GIST_ID}/raw/posts.json`;
     const response = await fetch(rawUrl);
     
     if (response.ok) {
       const allPosts = await response.json();
       console.log('All posts from Gist:', allPosts);
       
-      // Filter by site name
+      // Filter by site name - THIS separates articles!
       const sitePosts = allPosts.filter(post => post.site === SITE_NAME);
       console.log(`Found ${sitePosts.length} posts for site: ${SITE_NAME}`);
       
