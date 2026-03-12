@@ -318,12 +318,13 @@ function detectRepoFromLocation() {
   var host = (window.location.hostname || '').toLowerCase();
   var path = (window.location.pathname || '').split('/').filter(Boolean);
   var out = { owner: '', repo: '' };
+
+  // Reliable auto-detection works on GitHub Pages style URLs.
   if (host.endsWith('.github.io')) {
     out.owner = host.replace('.github.io', '');
     out.repo = path.length ? path[0] : '';
-  } else if (path.length) {
-    out.repo = path[0];
   }
+
   return out;
 }
 
