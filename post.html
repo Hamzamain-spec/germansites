@@ -73,23 +73,27 @@ footer a{color:#888;text-decoration:none}
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
-const posts = JSON.parse(localStorage.getItem('db_posts') || '[]');
-const post = posts.find(p => p.id == id);
+const slug = params.get('slug');
 
-if (post) {
-  document.title = post.title + ' — DeutschBlog';
-  document.getElementById('post-title').textContent = post.title;
-  document.getElementById('post-cat').textContent = post.category || 'Deutschland';
-  document.getElementById('post-author').textContent = post.author || 'Redaktion';
-  document.getElementById('post-date').textContent = new Date(post.date).toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
-  const words = post.content.replace(/<[^>]+>/g,'').split(' ').length;
-  document.getElementById('post-read').textContent = Math.max(1, Math.round(words/200)) + ' Min. Lesezeit';
-  document.getElementById('article-body').innerHTML = post.content;
-  document.getElementById('post-hero').style.display = 'block';
-} else {
-  document.getElementById('not-found').style.display = 'block';
+async function loadPost() {
+  if (!slug) {
+    document.getElementById('not-found').style.display = 'block';
+    return;
+  }
+  try {
+    const res = await fetch('posts.json', { cache: 'no-store' });
+    const posts = res.ok ? await res.json() : [];
+    const post = posts.find(p => p.slug === slug);
+    if (!post) {
+      document.getElementById('not-found').style.display = 'block';
+      return;
+    }
+    location.href = 'posts/' + slug + '.html';
+  } catch (e) {
+    document.getElementById('not-found').style.display = 'block';
+  }
 }
+loadPost();
 </script>
 </body>
 </html>

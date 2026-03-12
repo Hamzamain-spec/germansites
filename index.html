@@ -112,28 +112,33 @@ footer a:hover{color:var(--red)}
 <script>
 const colors = ['color-1','color-2','color-3','color-4','color-5','color-6'];
 
-function loadPosts() {
-  const posts = JSON.parse(localStorage.getItem('db_posts') || '[]');
+async function loadPosts() {
   const grid = document.getElementById('posts-grid');
-  if (!posts.length) return;
-  grid.innerHTML = '';
-  posts.slice().reverse().forEach((p, i) => {
-    const color = colors[i % colors.length];
-    const date = new Date(p.date).toLocaleDateString('de-DE', {day:'numeric',month:'long',year:'numeric'});
-    const excerpt = p.content.replace(/<[^>]+>/g,'').substring(0, 120) + '...';
-    grid.innerHTML += `
-      <div class="card" onclick="location.href='post.html?id=${p.id}'">
+  try {
+    const res = await fetch('posts.json', { cache: 'no-store' });
+    const posts = res.ok ? await res.json() : [];
+    if (!posts.length) return;
+    grid.innerHTML = '';
+    posts.forEach((p, i) => {
+      const color = colors[i % colors.length];
+      const date = new Date(p.date).toLocaleDateString('de-DE', {day:'numeric',month:'long',year:'numeric'});
+      const excerpt = (p.excerpt || '').substring(0, 140) + '...';
+      grid.innerHTML += `
+      <article class="card" onclick="location.href='posts/${p.slug}.html'">
         <div class="card-img ${color}">
           <span class="card-cat">${p.category || 'Deutschland'}</span>
         </div>
         <div class="card-body">
           <div class="card-date">${date}</div>
-          <div class="card-title">${p.title}</div>
-          <div class="card-excerpt">${excerpt}</div>
-          <a class="card-link" href="post.html?id=${p.id}">Weiterlesen →</a>
+          <h2 class="card-title">${p.title}</h2>
+          <p class="card-excerpt">${excerpt}</p>
+          <a class="card-link" href="posts/${p.slug}.html">Weiterlesen →</a>
         </div>
-      </div>`;
-  });
+      </article>`;
+    });
+  } catch (e) {
+    console.error(e);
+  }
 }
 loadPosts();
 </script>
