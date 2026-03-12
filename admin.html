@@ -4,87 +4,103 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — DeutschBlog</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--red:#C0392B;--dark:#111;--bg:#F0F2F5;--white:#fff;--border:#E0E0E0;--green:#27AE60;--blue:#2980B9}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
-
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0A1628;color:#fff;min-height:100vh;font-size:14px}
 /* LOGIN */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460)}
-.login-box{background:var(--white);padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-.login-logo{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:8px}
-.login-title{font-size:28px;font-weight:700;margin-bottom:32px;color:var(--dark)}
-.field{margin-bottom:20px}
-.field label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px}
-.field input{width:100%;padding:12px 16px;border:1.5px solid var(--border);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border 0.2s}
-.field input:focus{border-color:var(--red)}
-.login-btn{width:100%;padding:14px;background:var(--red);color:#fff;border:none;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s}
-.login-btn:hover{opacity:0.9}
-.login-err{color:var(--red);font-size:13px;margin-top:12px;display:none;font-weight:500}
-
-/* ADMIN PANEL */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0A1628}
+.login-box{background:#0F1F3D;border:1px solid #1E3A6E;padding:48px 40px;width:100%;max-width:400px;border-top:4px solid #CC0000}
+.login-logo{margin-bottom:6px}
+.login-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:30px;font-weight:600}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:7px}
+.field input{width:100%;padding:11px 14px;border:1px solid #1E3A6E;font-size:14px;font-family:inherit;outline:none;background:#0F1F3D;color:#fff;transition:border 0.2s}
+.field input:focus{border-color:#CC0000}
+.login-btn{width:100%;padding:13px;background:#CC0000;color:#fff;border:none;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s}
+.login-btn:hover{opacity:0.85}
+.login-err{color:#EF4444;font-size:12px;margin-top:10px;display:none;font-weight:600;text-align:center}
+/* ADMIN SHELL */
 .admin-wrap{display:none;min-height:100vh}
-.admin-header{background:var(--dark);color:#fff;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.admin-logo{font-size:16px;font-weight:700;letter-spacing:-0.5px}
-.admin-logo span{color:var(--red)}
-.admin-nav{display:flex;gap:8px;align-items:center}
-.admin-nav button{background:transparent;border:1px solid #444;color:#ccc;padding:6px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
-.admin-nav button:hover,.admin-nav button.active{background:var(--red);border-color:var(--red);color:#fff}
-.logout-btn{background:transparent;border:none;color:#888;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;padding:6px 12px}
+.admin-header{background:#0F1F3D;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100;border-bottom:2px solid #CC0000}
+.admin-nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.nav-btn{background:transparent;border:1px solid #1E3A6E;color:rgba(255,255,255,0.45);padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.nav-btn:hover,.nav-btn.active{background:#CC0000;border-color:#CC0000;color:#fff}
+.logout-btn{background:transparent;border:none;color:rgba(255,255,255,0.45);font-size:11px;cursor:pointer;padding:6px;font-family:inherit}
 .logout-btn:hover{color:#fff}
-
-.admin-body{max-width:1100px;margin:0 auto;padding:32px 24px}
-
+.view-btn{display:inline-flex;align-items:center;background:transparent;border:1px solid #1E3A6E;color:rgba(255,255,255,0.45);padding:6px 14px;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s}
+.view-btn:hover{border-color:#CC0000;color:#CC0000}
 /* PANELS */
-.panel{display:none}
-.panel.active{display:block}
-.panel-title{font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:12px}
-.panel-title span{background:var(--red);color:#fff;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px}
-
+.admin-body{max-width:1100px;margin:0 auto;padding:28px 24px}
+.panel{display:none}.panel.active{display:block}
+.panel-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid #1E3A6E}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#0F1F3D;border:1px solid #1E3A6E;padding:24px;border-left:4px solid #CC0000}
+.stat-num{font-size:44px;font-weight:900;color:#CC0000;line-height:1;margin-bottom:3px}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45)}
+/* CTA */
+.dashboard-cta{background:#0F1F3D;border:1px solid #1E3A6E;padding:48px;text-align:center}
+.dashboard-cta h3{font-size:26px;font-weight:800;color:#fff;margin-bottom:8px}
+.dashboard-cta p{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:22px}
 /* EDITOR */
-.editor-grid{display:grid;grid-template-columns:1fr 280px;gap:24px}
-.editor-main{background:var(--white);padding:28px;border:1px solid var(--border)}
-.editor-side{display:flex;flex-direction:column;gap:16px}
-.side-box{background:var(--white);padding:20px;border:1px solid var(--border)}
-.side-box h3{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.form-field{margin-bottom:20px}
-.form-field label{display:block;font-size:12px;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase}
-.form-field input,.form-field select,.form-field textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border 0.2s;background:var(--bg)}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--red);background:#fff}
-#post-content{min-height:380px;resize:vertical;line-height:1.7;font-size:14px}
-.title-input{font-size:22px;font-weight:700;border:none!important;background:transparent!important;padding:0!important;width:100%;outline:none;font-family:'Inter',sans-serif;margin-bottom:16px;color:var(--dark)}
-.title-input::placeholder{color:#ccc}
-.title-sep{height:2px;background:linear-gradient(to right,var(--red),transparent);margin-bottom:20px}
-.toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.toolbar button{background:var(--bg);border:1px solid var(--border);padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
-.toolbar button:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
-.publish-btn{width:100%;padding:14px;background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.5px;margin-bottom:8px;transition:opacity 0.2s}
-.publish-btn:hover{opacity:0.9}
-.draft-btn{width:100%;padding:10px;background:var(--bg);color:var(--dark);border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
-.draft-btn:hover{border-color:var(--dark)}
-.success-msg{background:#d4edda;color:#155724;padding:12px 16px;font-size:13px;font-weight:600;margin-top:8px;display:none;border-left:4px solid var(--green)}
-
-/* POSTS LIST */
-.posts-table{background:var(--white);border:1px solid var(--border);overflow:hidden}
-.posts-table-header{display:grid;grid-template-columns:1fr 140px 120px 100px;padding:12px 20px;background:var(--bg);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888}
-.post-row{display:grid;grid-template-columns:1fr 140px 120px 100px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background 0.15s}
-.post-row:hover{background:#fafafa}
+.editor-grid{display:grid;grid-template-columns:1fr 280px;gap:18px}
+.editor-main{background:#0F1F3D;border:1px solid #1E3A6E;padding:28px}
+.editor-side{display:flex;flex-direction:column;gap:12px}
+.side-box{background:#0F1F3D;border:1px solid #1E3A6E;padding:18px}
+.side-box h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1E3A6E}
+.title-input{font-size:24px;font-weight:800;border:none;background:transparent;width:100%;outline:none;margin-bottom:14px;color:#fff;font-family:inherit}
+.title-input::placeholder{color:#1E3A6E}
+.title-sep{height:2px;background:linear-gradient(to right,#CC0000,transparent);margin-bottom:18px}
+.form-field{margin-bottom:13px}
+.form-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:9px 12px;border:1px solid #1E3A6E;font-size:13px;font-family:inherit;outline:none;background:#0F1F3D;color:#fff;transition:border 0.2s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#CC0000}
+.form-field select option{background:#0F1F3D;color:#fff}
+#post-content{min-height:360px;resize:vertical;line-height:1.7}
+.toolbar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.toolbar button{background:#0F1F3D;border:1px solid #1E3A6E;padding:4px 11px;font-size:12px;font-weight:700;cursor:pointer;color:#fff;transition:all 0.2s;font-family:inherit}
+.toolbar button:hover{background:#CC0000;color:#fff;border-color:#CC0000}
+.pub-btn{width:100%;padding:13px;background:#CC0000;color:#fff;border:none;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:7px;transition:opacity 0.2s}
+.pub-btn:hover{opacity:0.85}
+.pub-btn:disabled{opacity:0.5;cursor:not-allowed}
+.cancel-btn{width:100%;padding:9px;background:transparent;color:rgba(255,255,255,0.45);border:1px solid #1E3A6E;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.2s;font-family:inherit}
+.cancel-btn:hover{border-color:#CC0000;color:#CC0000}
+.status-msg{padding:10px;font-size:11px;font-weight:700;margin-top:8px;display:none;text-align:center;letter-spacing:1px}
+.status-msg.success{background:rgba(34,197,94,0.12);color:#22C55E;border:1px solid rgba(34,197,94,0.3)}
+.status-msg.error{background:rgba(239,68,68,0.12);color:#EF4444;border:1px solid rgba(239,68,68,0.3)}
+.status-msg.loading{background:rgba(234,179,8,0.12);color:#EAB308;border:1px solid rgba(234,179,8,0.3)}
+/* GITHUB STATUS */
+.gh-status{background:#0F1F3D;border:1px solid #1E3A6E;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:12px}
+.gh-dot{width:8px;height:8px;border-radius:50%;background:#6B7280;flex-shrink:0}
+.gh-dot.ok{background:#22C55E}.gh-dot.err{background:#EF4444}.gh-dot.loading{background:#EAB308;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.gh-text{color:rgba(255,255,255,0.45)}
+/* POSTS TABLE */
+.posts-table{background:#0F1F3D;border:1px solid #1E3A6E;overflow:hidden}
+.posts-table-header{display:grid;grid-template-columns:1fr 160px 120px 90px 110px;padding:10px 18px;background:#0A1628;color:rgba(255,255,255,0.45);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid #1E3A6E}
+.post-row{display:grid;grid-template-columns:1fr 160px 120px 90px 110px;padding:14px 18px;border-bottom:1px solid #1E3A6E;align-items:center;transition:background 0.15s}
+.post-row:hover{background:#0A1628}
 .post-row:last-child{border-bottom:none}
-.post-row-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:4px}
-.post-row-excerpt{font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px}
-.post-row-date{font-size:12px;color:#888}
-.post-row-cat{font-size:11px;background:#EEF2FF;color:#4338CA;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block}
-.row-actions{display:flex;gap:6px}
-.edit-btn{background:var(--blue);color:#fff;border:none;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.del-btn{background:var(--red);color:#fff;border:none;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.empty-posts{text-align:center;padding:60px;color:#aaa;font-size:14px}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:var(--white);padding:24px;border:1px solid var(--border);border-top:3px solid var(--red)}
-.stat-num{font-size:36px;font-weight:700;color:var(--dark);margin-bottom:4px}
-.stat-label{font-size:12px;color:#888;font-weight:500;letter-spacing:0.5px;text-transform:uppercase}
-.view-site-btn{display:inline-flex;align-items:center;gap:6px;background:var(--dark);color:#fff;padding:8px 18px;text-decoration:none;font-size:13px;font-weight:600;transition:background 0.2s}
-.view-site-btn:hover{background:var(--red)}
+.post-row-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.post-row-slug{font-size:11px;color:rgba(255,255,255,0.45);font-family:monospace}
+.post-row-date{font-size:11px;color:rgba(255,255,255,0.45)}
+.post-row-cat{font-size:9px;background:#0A1628;color:#CC0000;padding:2px 8px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;border:1px solid #1E3A6E;display:inline-block}
+.row-actions{display:flex;gap:5px}
+.edit-btn{background:#CC0000;color:#fff;border:none;padding:4px 10px;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px}
+.del-btn{background:transparent;color:#EF4444;border:1px solid #EF4444;padding:4px 10px;font-size:9px;font-weight:700;cursor:pointer}
+.empty-posts{text-align:center;padding:60px;color:rgba(255,255,255,0.45)}
+.preview-box{background:#0A1628;border:1px solid #1E3A6E;padding:10px;margin-top:8px}
+.preview-slug{font-size:10px;font-family:monospace;color:#CC0000;margin-bottom:4px}
+.preview-title-txt{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
+.preview-exc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5}
+/* REPO SETUP */
+.repo-setup{background:#0F1F3D;border:2px dashed #1E3A6E;padding:32px;text-align:center;margin-bottom:20px}
+.repo-setup h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px}
+.repo-setup p{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:16px}
+.repo-input{display:flex;gap:8px;max-width:440px;margin:0 auto}
+.repo-input input{flex:1;padding:9px 12px;border:1px solid #1E3A6E;font-size:13px;font-family:inherit;outline:none;background:#0F1F3D;color:#fff}
+.repo-input input:focus{border-color:#CC0000}
+.repo-input button{padding:9px 18px;background:#CC0000;color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -92,60 +108,48 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-h
 <!-- LOGIN -->
 <div class="login-wrap" id="login-screen">
   <div class="login-box">
-    <div class="login-logo">DeutschBlog</div>
-    <div class="login-title">Admin Login</div>
-    <div class="field">
-      <label>Passwort</label>
-      <input type="password" id="pw-input" placeholder="Passwort eingeben..." onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Anmelden</button>
-    <div class="login-err" id="login-err">❌ Falsches Passwort!</div>
+    <div class="login-logo"><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff">Deutsch<span style="color:#CC0000">Blog</span></span></div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="field"><label>Passwort</label><input type="password" id="pw-input" placeholder="Passwort..." onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" onclick="doLogin()">ANMELDEN →</button>
+    <div class="login-err" id="login-err">⚠ Falsches Passwort</div>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div class="admin-wrap" id="admin-panel">
   <div class="admin-header">
-    <div class="admin-logo">Deutsch<span>Blog</span> Admin</div>
+    <div><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff">Deutsch<span style="color:#CC0000">Blog</span></span></div>
     <div class="admin-nav">
-      <button class="active" onclick="showPanel('dashboard',this)">📊 Dashboard</button>
-      <button onclick="showPanel('new-post',this)">✏️ Neuer Artikel</button>
-      <button onclick="showPanel('all-posts',this)">📋 Alle Artikel</button>
-      <a href="index.html" target="_blank" class="view-site-btn">🌐 Website</a>
+      <button class="nav-btn active" onclick="showPanel('dashboard',this)">Dashboard</button>
+      <button class="nav-btn" onclick="showPanel('new-post',this)">✏ Neuer Artikel</button>
+      <button class="nav-btn" onclick="showPanel('all-posts',this)">📋 Alle Artikel</button>
+      <button class="nav-btn" onclick="showPanel('settings',this)">⚙ Repo</button>
+      <a href="index.html" target="_blank" class="view-btn">🌐 Website</a>
       <button class="logout-btn" onclick="logout()">Abmelden</button>
     </div>
   </div>
-
   <div class="admin-body">
 
     <!-- DASHBOARD -->
     <div class="panel active" id="panel-dashboard">
-      <div class="panel-title"><span>📊</span> Dashboard</div>
+      <div class="panel-title">Dashboard</div>
+      <div id="gh-status-dash" class="gh-status"><div class="gh-dot loading" id="gh-dot"></div><span class="gh-text" id="gh-text">GitHub-Verbindung wird geprüft...</span></div>
       <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-num" id="stat-total">0</div>
-          <div class="stat-label">Artikel gesamt</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num" id="stat-today">0</div>
-          <div class="stat-label">Heute veröffentlicht</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num" id="stat-cats">0</div>
-          <div class="stat-label">Kategorien</div>
-        </div>
+        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Artikel gesamt</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-today">0</div><div class="stat-label">Heute publiziert</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-cats">0</div><div class="stat-label">Kategorien</div></div>
       </div>
-      <div style="text-align:center;padding:40px;background:var(--white);border:1px solid var(--border)">
-        <div style="font-size:32px;margin-bottom:12px">✍️</div>
-        <div style="font-size:18px;font-weight:700;margin-bottom:8px">Bereit zum Schreiben?</div>
-        <div style="font-size:14px;color:#888;margin-bottom:20px">Erstelle deinen nächsten Artikel</div>
-        <button class="publish-btn" style="width:auto;padding:12px 32px" onclick="showPanel('new-post',document.querySelector('.admin-nav button:nth-child(2)'))">Neuen Artikel erstellen →</button>
+      <div class="dashboard-cta">
+        <h3>Bereit zu schreiben?</h3>
+        <p>Erstelle deinen nächsten Artikel — er wird direkt auf GitHub gespeichert.</p>
+        <button class="pub-btn" style="width:auto;padding:11px 32px" onclick="showPanel('new-post',document.querySelectorAll('.nav-btn')[1])">Neuen Artikel erstellen →</button>
       </div>
     </div>
 
     <!-- NEW POST -->
     <div class="panel" id="panel-new-post">
-      <div class="panel-title"><span>✏️</span> <span id="editor-mode-title">Neuer Artikel</span></div>
+      <div class="panel-title" id="editor-mode-title">Neuer Artikel</div>
       <div class="editor-grid">
         <div class="editor-main">
           <input class="title-input" type="text" id="post-title" placeholder="Artikeltitel eingeben...">
@@ -158,44 +162,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-h
             <button onclick="wrapTag('blockquote')">❝</button>
             <button onclick="insertLink()">🔗 Link</button>
             <button onclick="wrapTag('ul')">Liste</button>
+            <button onclick="wrapTag('p')">§ Abs.</button>
           </div>
-          <div class="form-field">
-            <textarea id="post-content" placeholder="Artikelinhalt hier schreiben... HTML ist erlaubt.&#10;&#10;Beispiel:&#10;&lt;p&gt;Ihr Artikel hier...&lt;/p&gt;&#10;&lt;h2&gt;Zwischenüberschrift&lt;/h2&gt;&#10;&lt;p&gt;Mehr Inhalt...&lt;/p&gt;&#10;&lt;p&gt;Hier ist der &lt;a href=&quot;https://example.com&quot;&gt;Link Text&lt;/a&gt;&lt;/p&gt;"></textarea>
-          </div>
+          <div class="form-field"><textarea id="post-content" placeholder="Artikelinhalt... HTML erlaubt.&#10;&#10;Beispiel:&#10;&lt;p&gt;Ihr Text hier...&lt;/p&gt;&#10;&lt;h2&gt;Zwischenüberschrift&lt;/h2&gt;&#10;&lt;p&gt;Weiterer Text... &lt;a href=&quot;https://example.com&quot;&gt;Link&lt;/a&gt;&lt;/p&gt;"></textarea></div>
         </div>
         <div class="editor-side">
           <div class="side-box">
             <h3>Veröffentlichen</h3>
-            <button class="publish-btn" onclick="publishPost()">🚀 Veröffentlichen</button>
-            <button class="draft-btn" onclick="clearEditor()">✖ Abbrechen</button>
-            <div class="success-msg" id="success-msg">✅ Artikel veröffentlicht!</div>
+            <button class="pub-btn" id="publish-btn" onclick="publishPost()">🚀 Auf GitHub speichern</button>
+            <button class="cancel-btn" onclick="clearEditor()">✖ Abbrechen</button>
+            <div class="status-msg" id="status-msg"></div>
           </div>
           <div class="side-box">
             <h3>Details</h3>
-            <div class="form-field">
-              <label>Kategorie</label>
-              <select id="post-cat">
-                <option>Deutschland</option>
-                <option>Wirtschaft</option>
-                <option>Technik</option>
-                <option>Lifestyle</option>
-                <option>Reisen</option>
-                <option>Ratgeber</option>
-                <option>Sport</option>
-                <option>Kultur</option>
-                <option>Politik</option>
-                <option>Sonstiges</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label>Autor</label>
-              <input type="text" id="post-author" placeholder="Redaktion" value="Redaktion">
+            <div class="form-field"><label>Kategorie</label><select id="post-cat"><option>Deutschland</option>
+<option>Politik</option>
+<option>Wirtschaft</option>
+<option>Kultur</option>
+<option>Gesellschaft</option>
+<option>Sport</option>
+<option>Ratgeber</option>
+<option>Technologie</option></select></div>
+            <div class="form-field"><label>Autor</label><input type="text" id="post-author" value="Redaktion"></div>
+          </div>
+          <div class="side-box">
+            <h3>Vorschau URL</h3>
+            <div class="preview-box">
+              <div class="preview-slug" id="preview-slug">/posts/—</div>
+              <div class="preview-title-txt" id="preview-title">—</div>
+              <div class="preview-exc" id="preview-excerpt">—</div>
             </div>
           </div>
           <div class="side-box">
-            <h3>Vorschau</h3>
-            <div id="preview-title" style="font-size:13px;font-weight:700;margin-bottom:6px;color:#333">—</div>
-            <div id="preview-excerpt" style="font-size:11px;color:#aaa;line-height:1.5">—</div>
+            <h3>Repo-Info</h3>
+            <div style="font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6" id="repo-info-box">Nicht erkannt. Gehe zu ⚙ Repo.</div>
           </div>
         </div>
       </div>
@@ -203,15 +203,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-h
 
     <!-- ALL POSTS -->
     <div class="panel" id="panel-all-posts">
-      <div class="panel-title"><span>📋</span> Alle Artikel</div>
+      <div class="panel-title">Alle Artikel</div>
+      <div id="all-posts-status" style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:14px"></div>
       <div class="posts-table">
-        <div class="posts-table-header">
-          <div>Titel</div>
-          <div>Datum</div>
-          <div>Kategorie</div>
-          <div>Aktionen</div>
+        <div class="posts-table-header"><div>Titel / Slug</div><div>Datum</div><div>Kategorie</div><div>Autor</div><div>Aktionen</div></div>
+        <div id="posts-list"><div class="empty-posts">Lade Artikel von GitHub...</div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS / REPO -->
+    <div class="panel" id="panel-settings">
+      <div class="panel-title">⚙ GitHub Repository</div>
+      <div class="side-box" style="max-width:600px">
+        <h3>Repository erkennen</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:16px;line-height:1.6">
+          Die App erkennt automatisch den Repo-Namen aus der URL.<br>
+          Format: <code style="background:#0A1628;padding:2px 6px;font-size:11px">nutzername.github.io/repo-name</code><br>
+          Oder manuell eingeben falls lokal:
+        </p>
+        <div style="margin-bottom:14px">
+          <div class="form-field"><label>Erkannter Owner</label><input type="text" id="cfg-owner" placeholder="z.B. hamzamain-spec"></div>
+          <div class="form-field"><label>Erkannter Repo</label><input type="text" id="cfg-repo" placeholder="z.B. deutschblog"></div>
+          <div class="form-field"><label>Branch</label><input type="text" id="cfg-branch" value="main"></div>
         </div>
-        <div id="posts-list"></div>
+        <button class="pub-btn" style="width:auto;padding:10px 24px" onclick="saveRepoConfig()">✅ Speichern & Testen</button>
+        <div class="status-msg" id="cfg-status" style="margin-top:10px"></div>
+      </div>
+      <div class="side-box" style="max-width:600px;margin-top:16px">
+        <h3>So funktioniert es</h3>
+        <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8">
+          1. Artikel wird als <strong style="color:#fff">posts/artikel-titel.html</strong> in deinem GitHub Repo gespeichert<br>
+          2. <strong style="color:#fff">posts.json</strong> wird aktualisiert (Artikelindex)<br>
+          3. GitHub Pages veröffentlicht automatisch innerhalb ~30 Sekunden<br>
+          4. URL: <strong style="color:#CC0000">deinrepo.github.io/posts/artikel-titel.html</strong>
+        </div>
       </div>
     </div>
 
@@ -220,161 +245,425 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 <script>
 const PASS = 'germanadmin00#hamzauthority1';
-let editingId = null;
+const GH_TOKEN = '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';
+const SITE_NAME = 'DeutschBlog';
+let editingSlug = null;
+let repoOwner = '';
+let repoName = '';
+let repoBranch = 'main';
 
-// LOGIN
-function doLogin() {
-  const val = document.getElementById('pw-input').value;
-  if (val === PASS) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
-    loadDashboard();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
-    document.getElementById('pw-input').value = '';
+// ─── AUTO-DETECT REPO FROM URL ─────────────────────────────────────
+function autoDetectRepo() {
+  const host = window.location.hostname; // e.g. hamzamain-spec.github.io
+  const path = window.location.pathname; // e.g. /germansites/admin.html
+  
+  // Try to load saved config first
+  const saved = JSON.parse(localStorage.getItem('gh_repo_config') || '{}');
+  if (saved.owner && saved.repo) {
+    repoOwner = saved.owner;
+    repoName = saved.repo;
+    repoBranch = saved.branch || 'main';
+    updateRepoInfoBox();
+    return true;
   }
+  
+  // Auto-detect from GitHub Pages URL
+  if (host.endsWith('.github.io')) {
+    repoOwner = host.replace('.github.io', '');
+    const pathParts = path.split('/').filter(Boolean);
+    // if path is /repo-name/admin.html → pathParts[0] is repo
+    // if path is /admin.html → repo = owner.github.io (user site)
+    if (pathParts.length >= 2) {
+      repoName = pathParts[0];
+    } else {
+      repoName = host; // user pages site
+    }
+    repoBranch = 'main';
+    saveRepoToStorage();
+    updateRepoInfoBox();
+    return true;
+  }
+  
+  // Local / unknown — show settings
+  updateRepoInfoBox();
+  return false;
 }
 
-function logout() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('admin-panel').style.display = 'none';
-  document.getElementById('pw-input').value = '';
+function updateRepoInfoBox() {
+  const box = document.getElementById('repo-info-box');
+  if (!box) return;
+  if (repoOwner && repoName) {
+    box.innerHTML = `<strong style="color:'#fff'">${repoOwner}/${repoName}</strong><br><span style="font-size:10px">Branch: ${repoBranch}</span>`;
+  } else {
+    box.innerHTML = '<span style="color:#EF4444">⚠ Repo nicht erkannt.<br>Gehe zu ⚙ Repo.</span>';
+  }
+  // Fill settings fields
+  const ow = document.getElementById('cfg-owner'), rp = document.getElementById('cfg-repo'), br = document.getElementById('cfg-branch');
+  if (ow) ow.value = repoOwner;
+  if (rp) rp.value = repoName;
+  if (br) br.value = repoBranch;
 }
 
-// PANELS
-function showPanel(name, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (name === 'all-posts') loadPostsList();
-  if (name === 'dashboard') loadDashboard();
-  if (name === 'new-post') { editingId = null; clearEditor(); }
+function saveRepoToStorage() {
+  localStorage.setItem('gh_repo_config', JSON.stringify({owner: repoOwner, repo: repoName, branch: repoBranch}));
 }
 
-// STORAGE
-function getPosts() { return JSON.parse(localStorage.getItem('db_posts') || '[]'); }
-function savePosts(posts) { localStorage.setItem('db_posts', JSON.stringify(posts)); }
+async function saveRepoConfig() {
+  repoOwner = document.getElementById('cfg-owner').value.trim();
+  repoName  = document.getElementById('cfg-repo').value.trim();
+  repoBranch = document.getElementById('cfg-branch').value.trim() || 'main';
+  if (!repoOwner || !repoName) { alert('Owner und Repo eingeben!'); return; }
+  saveRepoToStorage();
+  updateRepoInfoBox();
+  const st = document.getElementById('cfg-status');
+  showStatus(st, 'loading', '⏳ Verbindung wird getestet...');
+  const ok = await testGitHubConnection();
+  if (ok) { showStatus(st, 'success', '✅ Verbindung erfolgreich!'); updateGHStatus(true); }
+  else     { showStatus(st, 'error',   '❌ Verbindung fehlgeschlagen. Token oder Repo prüfen.'); updateGHStatus(false); }
+}
 
-// PUBLISH
-function publishPost() {
-  const title = document.getElementById('post-title').value.trim();
+// ─── GITHUB API ─────────────────────────────────────────────────────
+function ghHeaders() {
+  return { 'Authorization': `token ${GH_TOKEN}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+}
+
+async function testGitHubConnection() {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}`, {headers: ghHeaders()});
+    return r.ok;
+  } catch(e) { return false; }
+}
+
+async function getFileSHA(path) {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${repoBranch}`, {headers: ghHeaders()});
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.sha || null;
+  } catch(e) { return null; }
+}
+
+async function putFile(path, content, message, sha=null) {
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: repoBranch };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`, {
+    method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body)
+  });
+  if (!r.ok) { const err = await r.json(); throw new Error(err.message || 'GitHub API Fehler'); }
+  return await r.json();
+}
+
+async function getPostsJson() {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/posts.json?ref=${repoBranch}`, {headers: ghHeaders()});
+    if (!r.ok) return { posts: [], sha: null };
+    const d = await r.json();
+    const content = decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+    return { posts: JSON.parse(content), sha: d.sha };
+  } catch(e) { return { posts: [], sha: null }; }
+}
+
+// ─── SLUG ────────────────────────────────────────────────────────────
+function slugify(text) {
+  const map = {'ä':'ae','ö':'oe','ü':'ue','Ä':'Ae','Ö':'Oe','Ü':'Ue','ß':'ss','à':'a','á':'a','â':'a','ã':'a','è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i','ò':'o','ó':'o','ô':'o','õ':'o','ù':'u','ú':'u','û':'u','ý':'y','ñ':'n','ç':'c'};
+  return text.replace(/[äöüÄÖÜßàáâãèéêëìíîïòóôõùúûýñç]/g, m => map[m]||m)
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').substring(0,80);
+}
+
+// ─── POST HTML GENERATOR ─────────────────────────────────────────────
+function buildPostHTML(title, content, cat, author, date, slug) {
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title} — ${SITE_NAME}</title>
+<meta name="description" content="${content.replace(/<[^>]+>/g,'').substring(0,150)}">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0A1628;color:#fff;line-height:1.7}
+header{background:#0F1F3D;border-bottom:2px solid #CC0000;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.logo-link{text-decoration:none;font-size:20px;font-weight:800;color:#fff}
+.back{color:#CC0000;text-decoration:none;font-size:13px;font-weight:600}
+.back:hover{color:#fff}
+.hero{background:#0F1F3D;border-bottom:1px solid #1E3A6E;padding:52px 32px}
+.hero-inner{max-width:780px;margin:0 auto}
+.post-cat{display:inline-block;background:#CC0000;color:#fff;font-size:9px;font-weight:800;letter-spacing:2px;padding:3px 12px;text-transform:uppercase;margin-bottom:14px}
+.post-title{font-size:46px;font-weight:900;line-height:1.1;margin-bottom:18px;color:#fff}
+.post-meta{font-size:12px;color:rgba(255,255,255,0.45);display:flex;gap:20px;flex-wrap:wrap;padding-top:16px;border-top:1px solid #1E3A6E}
+.post-meta strong{color:#fff}
+.layout{max-width:900px;margin:40px auto;padding:0 32px;display:grid;grid-template-columns:1fr 240px;gap:28px}
+.main-col{background:#0F1F3D;border:1px solid #1E3A6E;padding:40px}
+.article-body{font-size:17px;line-height:1.9;color:rgba(255,255,255,0.8)}
+.article-body p{margin-bottom:24px}
+.article-body h2{font-size:26px;font-weight:800;color:#fff;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid #1E3A6E}
+.article-body h3{font-size:18px;font-weight:700;color:#fff;margin:28px 0 10px}
+.article-body a{color:#CC0000;text-decoration:none;border-bottom:1px solid transparent;font-weight:600}
+.article-body a:hover{border-bottom-color:#CC0000}
+.article-body ul,.article-body ol{padding-left:22px;margin-bottom:20px}
+.article-body li{margin-bottom:7px}
+blockquote{background:#0A1628;border-left:4px solid #CC0000;padding:18px 22px;margin:24px 0;font-style:italic;color:rgba(255,255,255,0.7)}
+.sidebar{display:flex;flex-direction:column;gap:14px}
+.widget{background:#0F1F3D;border:1px solid #1E3A6E;padding:18px}
+.widget h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1E3A6E}
+.rec-item{padding:9px 0;border-bottom:1px solid #1E3A6E;font-size:13px}
+.rec-item:last-child{border-bottom:none}
+.rec-item a{color:#fff;text-decoration:none;font-weight:600;display:block;line-height:1.4}
+.rec-item a:hover{color:#CC0000}
+.rec-item span{font-size:11px;color:rgba(255,255,255,0.45)}
+footer{background:#0A1628;border-top:1px solid #1E3A6E;text-align:center;padding:24px;font-size:12px;color:rgba(255,255,255,0.45);margin-top:60px}
+footer a{color:rgba(255,255,255,0.45);text-decoration:none;margin:0 8px}
+footer a:hover{color:#CC0000}
+</style>
+</head>
+<body>
+<header>
+  <a href="../index.html" class="logo-link">DeutschBlog</a>
+  <a href="../index.html" class="back">← Alle Artikel</a>
+</header>
+<div class="hero">
+  <div class="hero-inner">
+    <span class="post-cat">${cat}</span>
+    <div class="post-title">${title}</div>
+    <div class="post-meta">
+      <span>✍ <strong>${author}</strong></span>
+      <span>📅 <strong>${new Date(date).toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'})}</strong></span>
+      <span>⏱ <strong>${Math.max(1,Math.round(content.replace(/<[^>]+>/g,'').split(' ').length/200))} Min.</strong></span>
+    </div>
+  </div>
+</div>
+<div class="layout">
+  <div class="main-col">
+    <div class="article-body">${content}</div>
+  </div>
+  <aside class="sidebar">
+    <div class="widget"><h3>Weitere Artikel</h3><div id="rec"></div></div>
+  </aside>
+</div>
+<footer>&copy; 2026 ${SITE_NAME} &nbsp;|&nbsp;<a href="../index.html">Home</a>&nbsp;|&nbsp;<a href="#">Impressum</a></footer>
+<script>
+fetch('../posts.json').then(r=>r.json()).then(posts=>{
+  const rec=document.getElementById('rec');
+  posts.filter(p=>p.slug!=='${slug}').slice(0,5).forEach(p=>{
+    rec.innerHTML+=\`<div class="rec-item"><a href="${p.slug}.html">${p.title}</a><span>${p.category||''}</span></div>\`;
+  });
+}).catch(()=>{});
+<\/script>
+</body>
+</html>`;
+}
+
+// ─── PUBLISH ─────────────────────────────────────────────────────────
+async function publishPost() {
+  if (!repoOwner || !repoName) {
+    alert('Bitte zuerst das GitHub Repository konfigurieren! (⚙ Repo)');
+    showPanel('settings', document.querySelectorAll('.nav-btn')[3]);
+    return;
+  }
+  const title   = document.getElementById('post-title').value.trim();
   const content = document.getElementById('post-content').value.trim();
   if (!title || !content) { alert('Bitte Titel und Inhalt eingeben!'); return; }
-  const posts = getPosts();
-  if (editingId) {
-    const idx = posts.findIndex(p => p.id == editingId);
-    if (idx > -1) { posts[idx].title = title; posts[idx].content = content; posts[idx].category = document.getElementById('post-cat').value; posts[idx].author = document.getElementById('post-author').value; }
-  } else {
-    posts.push({ id: Date.now(), title, content, category: document.getElementById('post-cat').value, author: document.getElementById('post-author').value || 'Redaktion', date: new Date().toISOString() });
+  
+  const cat    = document.getElementById('post-cat').value;
+  const author = document.getElementById('post-author').value || 'Redaktion';
+  const date   = new Date().toISOString();
+  const slug   = editingSlug || slugify(title);
+  
+  const btn = document.getElementById('publish-btn');
+  const msg = document.getElementById('status-msg');
+  btn.disabled = true;
+  
+  showStatus(msg, 'loading', '⏳ Schritt 1/2: Artikel wird gespeichert...');
+  
+  try {
+    // 1. Save post HTML
+    const postHTML = buildPostHTML(title, content, cat, author, date, slug);
+    const postPath = `posts/${slug}.html`;
+    const existingSHA = await getFileSHA(postPath);
+    await putFile(postPath, postHTML, `${editingSlug ? 'Update' : 'Add'} article: ${title}`, existingSHA);
+    
+    showStatus(msg, 'loading', '⏳ Schritt 2/2: Index wird aktualisiert...');
+    
+    // 2. Update posts.json
+    const { posts, sha: jsonSHA } = await getPostsJson();
+    const existingIdx = posts.findIndex(p => p.slug === slug);
+    const entry = { slug, title, category: cat, author, date, excerpt: content.replace(/<[^>]+>/g,'').substring(0,140) };
+    if (existingIdx >= 0) posts[existingIdx] = entry;
+    else posts.unshift(entry);
+    await putFile('posts.json', JSON.stringify(posts, null, 2), `Update posts.json: ${title}`, jsonSHA);
+    
+    showStatus(msg, 'success', `✅ Gespeichert! URL: posts/${slug}.html`);
+    loadDashboard();
+    setTimeout(() => { clearEditor(); showStatus(msg, 'success', `✅ Fertig: posts/${slug}.html`); }, 2000);
+    
+  } catch(e) {
+    showStatus(msg, 'error', `❌ Fehler: ${e.message}`);
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    editingSlug = null;
   }
-  savePosts(posts);
-  const msg = document.getElementById('success-msg');
-  msg.textContent = editingId ? '✅ Artikel aktualisiert!' : '✅ Artikel veröffentlicht!';
-  msg.style.display = 'block';
-  setTimeout(() => { msg.style.display = 'none'; clearEditor(); }, 2000);
-  editingId = null;
 }
 
-function clearEditor() {
-  document.getElementById('post-title').value = '';
-  document.getElementById('post-content').value = '';
-  document.getElementById('post-cat').value = 'Deutschland';
-  document.getElementById('post-author').value = 'Redaktion';
-  document.getElementById('preview-title').textContent = '—';
-  document.getElementById('preview-excerpt').textContent = '—';
-  document.getElementById('editor-mode-title').textContent = 'Neuer Artikel';
-  editingId = null;
-}
-
-// LIVE PREVIEW
-document.addEventListener('DOMContentLoaded', () => {
-  const titleEl = document.getElementById('post-title');
-  const contentEl = document.getElementById('post-content');
-  if (titleEl) titleEl.addEventListener('input', () => {
-    document.getElementById('preview-title').textContent = titleEl.value || '—';
-  });
-  if (contentEl) contentEl.addEventListener('input', () => {
-    const text = contentEl.value.replace(/<[^>]+>/g,'').substring(0,80);
-    document.getElementById('preview-excerpt').textContent = text ? text + '...' : '—';
-  });
-});
-
-// TOOLBAR
-function fmt(cmd) {
-  const ta = document.getElementById('post-content');
-  const s = ta.selectionStart, e = ta.selectionEnd;
-  const sel = ta.value.substring(s, e);
-  const tag = cmd === 'bold' ? 'strong' : 'em';
-  const wrapped = `<${tag}>${sel}</${tag}>`;
-  ta.value = ta.value.substring(0, s) + wrapped + ta.value.substring(e);
-}
-function wrapTag(tag) {
-  const ta = document.getElementById('post-content');
-  const s = ta.selectionStart, e = ta.selectionEnd;
-  const sel = ta.value.substring(s, e) || 'Text hier';
-  const wrapped = tag === 'ul' ? `<ul>\n  <li>${sel}</li>\n</ul>` : `<${tag}>${sel}</${tag}>`;
-  ta.value = ta.value.substring(0, s) + wrapped + ta.value.substring(e);
-}
-function insertLink() {
-  const url = prompt('URL eingeben:');
-  if (!url) return;
-  const ta = document.getElementById('post-content');
-  const s = ta.selectionStart, e = ta.selectionEnd;
-  const sel = ta.value.substring(s, e) || 'Link Text';
-  const link = `<a href="${url}">${sel}</a>`;
-  ta.value = ta.value.substring(0, s) + link + ta.value.substring(e);
-}
-
-// POSTS LIST
-function loadPostsList() {
-  const posts = getPosts();
+// ─── LOAD POSTS FROM GITHUB ──────────────────────────────────────────
+async function loadAllPosts() {
   const el = document.getElementById('posts-list');
-  if (!posts.length) { el.innerHTML = '<div class="empty-posts">Noch keine Artikel vorhanden.</div>'; return; }
-  el.innerHTML = posts.slice().reverse().map(p => {
-    const date = new Date(p.date).toLocaleDateString('de-DE');
-    const excerpt = p.content.replace(/<[^>]+>/g,'').substring(0,60);
-    return `<div class="post-row">
-      <div><div class="post-row-title">${p.title}</div><div class="post-row-excerpt">${excerpt}...</div></div>
-      <div class="post-row-date">${date}</div>
-      <div><span class="post-row-cat">${p.category || 'Deutschland'}</span></div>
-      <div class="row-actions">
-        <button class="edit-btn" onclick="editPost(${p.id})">✏ Edit</button>
-        <button class="del-btn" onclick="deletePost(${p.id})">✕ Del</button>
-      </div>
-    </div>`;
-  }).join('');
+  const st = document.getElementById('all-posts-status');
+  if (st) st.textContent = 'Lade von GitHub...';
+  try {
+    const { posts } = await getPostsJson();
+    if (!posts.length) { el.innerHTML = '<div class="empty-posts">Noch keine Artikel auf GitHub.</div>'; if(st) st.textContent=''; return; }
+    el.innerHTML = posts.map(p => {
+      const date = new Date(p.date).toLocaleDateString('de-DE');
+      return `<div class="post-row">
+        <div><div class="post-row-title">${p.title}</div><div class="post-row-slug">posts/${p.slug}.html</div></div>
+        <div class="post-row-date">${date}</div>
+        <div><span class="post-row-cat">${p.category||'—'}</span></div>
+        <div class="post-row-date">${p.author||'—'}</div>
+        <div class="row-actions">
+          <button class="edit-btn" onclick='editPost(${JSON.stringify(p)})'>✏ Edit</button>
+          <button class="del-btn" onclick="deletePost('${p.slug}','${p.title.replace(/'/g,\"\\'\")}'  )">✕</button>
+        </div></div>`;
+    }).join('');
+    if (st) st.textContent = `${posts.length} Artikel auf GitHub`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-posts">Fehler beim Laden.</div>';
+  }
 }
 
-function editPost(id) {
-  const post = getPosts().find(p => p.id == id);
-  if (!post) return;
-  editingId = id;
-  document.getElementById('post-title').value = post.title;
-  document.getElementById('post-content').value = post.content;
-  document.getElementById('post-cat').value = post.category || 'Deutschland';
-  document.getElementById('post-author').value = post.author || 'Redaktion';
+async function editPost(p) {
+  editingSlug = p.slug;
+  document.getElementById('post-title').value = p.title;
+  document.getElementById('post-cat').value = p.category || document.getElementById('post-cat').options[0].value;
+  document.getElementById('post-author').value = p.author || 'Redaktion';
+  // Load full content from GitHub
+  const msg = document.getElementById('status-msg');
+  showStatus(msg, 'loading', '⏳ Lade Artikelinhalt...');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/posts/${p.slug}.html?ref=${repoBranch}`, {headers: ghHeaders()});
+    if (r.ok) {
+      const d = await r.json();
+      const html = decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+      // Extract content from article-body div
+      const match = html.match(/<div class="article-body">([\s\S]*?)<\/div>\s*<\/div>\s*<aside/);
+      if (match) document.getElementById('post-content').value = match[1].trim();
+    }
+    showStatus(msg, 'success', '✅ Artikel geladen — jetzt bearbeiten');
+  } catch(e) {
+    showStatus(msg, 'error', 'Konnte Inhalt nicht laden');
+  }
   document.getElementById('editor-mode-title').textContent = 'Artikel bearbeiten';
-  document.getElementById('preview-title').textContent = post.title;
-  showPanel('new-post', document.querySelector('.admin-nav button:nth-child(2)'));
+  document.getElementById('preview-slug').textContent = `posts/${p.slug}.html`;
+  document.getElementById('preview-title').textContent = p.title;
+  showPanel('new-post', document.querySelectorAll('.nav-btn')[1]);
 }
 
-function deletePost(id) {
-  if (!confirm('Artikel wirklich löschen?')) return;
-  savePosts(getPosts().filter(p => p.id != id));
-  loadPostsList();
-  loadDashboard();
+async function deletePost(slug, title) {
+  if (!confirm(`"${title}" löschen?`)) return;
+  try {
+    // Delete HTML file
+    const sha = await getFileSHA(`posts/${slug}.html`);
+    if (sha) await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/posts/${slug}.html`, {
+      method: 'DELETE', headers: ghHeaders(),
+      body: JSON.stringify({ message: `Delete: ${title}`, sha, branch: repoBranch })
+    });
+    // Update posts.json
+    const { posts, sha: jsonSHA } = await getPostsJson();
+    const updated = posts.filter(p => p.slug !== slug);
+    await putFile('posts.json', JSON.stringify(updated, null, 2), `Remove from index: ${title}`, jsonSHA);
+    loadAllPosts();
+    loadDashboard();
+  } catch(e) { alert('Fehler: ' + e.message); }
 }
 
-// DASHBOARD
-function loadDashboard() {
-  const posts = getPosts();
+// ─── DASHBOARD STATS ─────────────────────────────────────────────────
+async function loadDashboard() {
+  const { posts } = await getPostsJson();
   document.getElementById('stat-total').textContent = posts.length;
   const today = new Date().toDateString();
   document.getElementById('stat-today').textContent = posts.filter(p => new Date(p.date).toDateString() === today).length;
-  const cats = new Set(posts.map(p => p.category));
-  document.getElementById('stat-cats').textContent = cats.size;
+  document.getElementById('stat-cats').textContent = new Set(posts.map(p => p.category)).size;
 }
+
+// ─── GH CONNECTION CHECK ─────────────────────────────────────────────
+async function updateGHStatus(forceOk=null) {
+  const dot = document.getElementById('gh-dot'), txt = document.getElementById('gh-text');
+  if (!dot) return;
+  if (!repoOwner || !repoName) {
+    dot.className='gh-dot err'; txt.textContent='⚠ Repository nicht konfiguriert. Gehe zu ⚙ Repo.'; return;
+  }
+  dot.className='gh-dot loading'; txt.textContent='Verbindung wird geprüft...';
+  const ok = forceOk !== null ? forceOk : await testGitHubConnection();
+  if (ok) { dot.className='gh-dot ok'; txt.textContent=`✅ Verbunden: ${repoOwner}/${repoName} (branch: ${repoBranch})`; }
+  else    { dot.className='gh-dot err'; txt.textContent=`❌ Keine Verbindung zu ${repoOwner}/${repoName} — Token oder Repo prüfen.`; }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────
+function showStatus(el, type, msg) {
+  if (!el) return;
+  el.className = `status-msg ${type}`;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function clearEditor() {
+  document.getElementById('post-title').value='';
+  document.getElementById('post-content').value='';
+  document.getElementById('post-cat').selectedIndex=0;
+  document.getElementById('post-author').value='Redaktion';
+  document.getElementById('preview-title').textContent='—';
+  document.getElementById('preview-slug').textContent='/posts/—';
+  document.getElementById('preview-excerpt').textContent='—';
+  document.getElementById('editor-mode-title').textContent='Neuer Artikel';
+  const msg=document.getElementById('status-msg'); msg.style.display='none';
+  editingSlug=null;
+}
+
+function fmt(cmd){const ta=document.getElementById('post-content'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.substring(s,e),tag=cmd==='bold'?'strong':'em';ta.value=ta.value.substring(0,s)+`<${tag}>${sel}</${tag}>`+ta.value.substring(e);}
+function wrapTag(tag){const ta=document.getElementById('post-content'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.substring(s,e)||'Text hier';const w=tag==='ul'?`<ul>\n  <li>${sel}</li>\n</ul>`:`<${tag}>${sel}</${tag}>`;ta.value=ta.value.substring(0,s)+w+ta.value.substring(e);}
+function insertLink(){const url=prompt('URL:');if(!url)return;const ta=document.getElementById('post-content'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.substring(s,e)||'Link';ta.value=ta.value.substring(0,s)+`<a href="${url}">${sel}</a>`+ta.value.substring(e);}
+
+function showPanel(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='all-posts')loadAllPosts();
+  if(name==='dashboard')loadDashboard();
+  if(name==='settings')updateRepoInfoBox();
+}
+
+// ─── LOGIN ───────────────────────────────────────────────────────────
+function doLogin(){
+  if(document.getElementById('pw-input').value===PASS){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    autoDetectRepo();
+    updateGHStatus();
+    loadDashboard();
+  }else{
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+function logout(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('pw-input').value='';
+}
+
+// ─── PREVIEW LIVE ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('post-title').addEventListener('input',e=>{
+    const slug=slugify(e.target.value);
+    document.getElementById('preview-title').textContent=e.target.value||'—';
+    document.getElementById('preview-slug').textContent=slug?`posts/${slug}.html`:'/posts/—';
+  });
+  document.getElementById('post-content').addEventListener('input',e=>{
+    const t=e.target.value.replace(/<[^>]+>/g,'').substring(0,80);
+    document.getElementById('preview-excerpt').textContent=t?t+'...':'—';
+  });
+});
 </script>
 </body>
 </html>
