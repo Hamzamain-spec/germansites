@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — DeutschBlog</title>
 <style>
+/* Keep ALL your existing admin styles - same as before */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0A1628;color:#ffffff;min-height:100vh;font-size:14px}
 /* LOGIN */
@@ -156,25 +157,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="pn" id="p-cfg">
       <div class="pt">Gist Konfiguration</div>
       <div class="gist-config">
-        <div class="gist-warning">
-          ⚠️ WICHTIG: Erstelle einen NEUEN Gist für DeutschBlog!<br>
-          Nicht den Gist von NederlandNieuws verwenden!
-        </div>
         <div class="gist-info">
-          <strong>📌 So erstellst du einen Gist:</strong><br>
-          1. Gehe zu <a href="https://gist.github.com" target="_blank" style="color:#CC0000">gist.github.com</a><br>
-          2. Dateiname: <strong>posts.json</strong><br>
-          3. Inhalt: <strong>[]</strong> (leeres Array)<br>
-          4. Wähle "Create public gist"<br>
-          5. Kopiere die Gist ID aus der URL<br>
+          <strong>📌 Gist ID (fest für alle Sites):</strong><br>
+          <strong style="font-size:16px;color:#CC0000">42ea11087f40fdba423f8eb0f575ac96</strong><br><br>
+          <strong>Site Name für diese Site:</strong> deutschblog
         </div>
         <div class="gist-field">
           <label>GitHub Token</label>
           <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-        </div>
-        <div class="gist-field">
-          <label>Gist ID (neu für DeutschBlog)</label>
-          <input type="text" id="gist-id" placeholder="z.B. 1234567890abcdef">
         </div>
         <div class="gist-field">
           <label>Site Name (für diese Site)</label>
@@ -265,10 +255,10 @@ Beispiel:
 
 <script>
 const PASS = 'germanadmin00#hamzauthority1';
+const GIST_ID = '42ea11087f40fdba423f8eb0f575ac96'; // Fixed Gist ID for all sites
 let editingId = null;
 let gistConfig = {
   token: '',
-  gistId: '',
   siteName: 'deutschblog'
 };
 
@@ -280,7 +270,6 @@ function loadGistConfig() {
       const savedConfig = JSON.parse(saved);
       gistConfig = {...gistConfig, ...savedConfig};
       document.getElementById('github-token').value = gistConfig.token || '';
-      document.getElementById('gist-id').value = gistConfig.gistId || '';
       document.getElementById('site-name').value = gistConfig.siteName || 'deutschblog';
     } catch (e) {
       console.error('Error loading Gist config:', e);
@@ -293,7 +282,6 @@ function loadGistConfig() {
 function saveGistConfig() {
   gistConfig = {
     token: document.getElementById('github-token').value,
-    gistId: document.getElementById('gist-id').value,
     siteName: document.getElementById('site-name').value || 'deutschblog'
   };
   localStorage.setItem('gist_config_deutsch', JSON.stringify(gistConfig));
@@ -303,31 +291,22 @@ function saveGistConfig() {
 
 function updateGistBox() {
   const box = document.getElementById('GISTBOX');
-  if (gistConfig.gistId) {
-    box.innerHTML = `<strong>Gist ID:</strong> ${gistConfig.gistId}<br><strong>Site:</strong> ${gistConfig.siteName}`;
-  } else {
-    box.innerHTML = '<span style="color:#EF4444">Nicht konfiguriert — ⚙ Gist Config</span>';
-  }
+  box.innerHTML = `<strong>Gist ID:</strong> ${GIST_ID}<br><strong>Site:</strong> ${gistConfig.siteName}`;
 }
 
 // Test Gist connection
 async function testGistConnection() {
   const token = document.getElementById('github-token').value;
-  const gistId = document.getElementById('gist-id').value;
   
   if (!token) {
     showGistStatus('❌ Token eingeben!', 'er');
-    return;
-  }
-  if (!gistId) {
-    showGistStatus('❌ Gist ID eingeben!', 'er');
     return;
   }
   
   showGistStatus('🔄 Teste Verbindung...', 'ld');
   
   try {
-    const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+    const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       headers: {
         'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json'
@@ -335,14 +314,11 @@ async function testGistConnection() {
     });
     
     if (response.ok) {
-      const data = await response.json();
       showGistStatus('✅ Verbunden! Gist gefunden.', 'ok');
     } else if (response.status === 401) {
       showGistStatus('❌ 401: Token ungültig', 'er');
     } else if (response.status === 403) {
       showGistStatus('❌ 403: Kein Zugriff - "gist" Scope?', 'er');
-    } else if (response.status === 404) {
-      showGistStatus('❌ 404: Gist nicht gefunden', 'er');
     } else {
       showGistStatus(`❌ Fehler ${response.status}`, 'er');
     }
@@ -360,12 +336,12 @@ function showGistStatus(message, type) {
 
 // Get posts from Gist
 async function getPostsFromGist() {
-  if (!gistConfig.token || !gistConfig.gistId) {
+  if (!gistConfig.token) {
     return [];
   }
   
   try {
-    const response = await fetch(`https://api.github.com/gists/${gistConfig.gistId}`, {
+    const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       headers: {
         'Authorization': `token ${gistConfig.token}`,
         'Accept': 'application/vnd.github.v3+json'
@@ -388,15 +364,15 @@ async function getPostsFromGist() {
 
 // Save posts to Gist
 async function savePostsToGist(posts) {
-  if (!gistConfig.token || !gistConfig.gistId) {
-    alert('Gist erst konfigurieren!');
+  if (!gistConfig.token) {
+    alert('Token erst konfigurieren!');
     return false;
   }
   
   try {
     // Get all existing posts
     let allPosts = [];
-    const getResponse = await fetch(`https://api.github.com/gists/${gistConfig.gistId}`, {
+    const getResponse = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       headers: {
         'Authorization': `token ${gistConfig.token}`,
         'Accept': 'application/vnd.github.v3+json'
@@ -417,7 +393,7 @@ async function savePostsToGist(posts) {
     allPosts = [...allPosts, ...posts];
     
     // Save back
-    const response = await fetch(`https://api.github.com/gists/${gistConfig.gistId}`, {
+    const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `token ${gistConfig.token}`,
@@ -475,7 +451,7 @@ async function getPosts() {
 
 // Save posts
 async function savePosts(posts) {
-  if (gistConfig.token && gistConfig.gistId) {
+  if (gistConfig.token) {
     const postsWithSite = posts.map(post => ({
       ...post,
       site: gistConfig.siteName
@@ -550,7 +526,8 @@ async function publish() {
       content,
       category: document.getElementById('PCAT').value,
       author: document.getElementById('PAU').value || 'Redaktion',
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      site: gistConfig.siteName
     });
   }
   
@@ -702,12 +679,12 @@ async function loadDash() {
   
   const dot = document.getElementById('GD');
   const txt = document.getElementById('GT');
-  if (gistConfig.gistId) {
+  if (gistConfig.token) {
     dot.className = 'gd ok';
-    txt.textContent = '✅ Gist verbunden';
+    txt.textContent = '✅ Token konfiguriert';
   } else {
     dot.className = 'gd er';
-    txt.textContent = '❌ Gist nicht konfiguriert';
+    txt.textContent = '❌ Token nicht konfiguriert';
   }
 }
 </script>
