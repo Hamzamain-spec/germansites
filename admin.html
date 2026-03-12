@@ -244,443 +244,332 @@ Beispiel:
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  CONSTANTS
-// ═══════════════════════════════════════════════
-var PASS  = 'germanadmin00#hamzauthority1';
-var TOKEN = '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';
-var SITE  = 'DeutschBlog';
-var owner = '', repo = '', branch = 'main', editSlug = null;
-
-// ═══════════════════════════════════════════════
-//  LOGIN  —  plain onclick, no template literals
-// ═══════════════════════════════════════════════
-document.getElementById('LOGINBTN').onclick = function() { doLogin(); };
-document.getElementById('PW').onkeydown = function(e) { if (e.key === 'Enter') doLogin(); };
+var PASS = 'germanadmin00#hamzauthority1';
+var TOKEN = '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';
+var DEFAULT_OWNER = 'Hamzamain-spec';
+var owner = '';
+var repo = '';
+var branch = 'main';
+var editSlug = null;
 
 function doLogin() {
   var pw = document.getElementById('PW').value;
-  if (pw === PASS) {
-    document.getElementById('LOGIN').style.display = 'none';
-    document.getElementById('ADMIN').style.display = 'block';
-    initAdmin();
-  } else {
+  if (pw !== PASS) {
     document.getElementById('LOGINERR').style.display = 'block';
     document.getElementById('PW').value = '';
+    return;
   }
+  document.getElementById('LOGINERR').style.display = 'none';
+  document.getElementById('LOGIN').style.display = 'none';
+  document.getElementById('ADMIN').style.display = 'block';
+  initAdmin();
 }
+
+document.getElementById('LOGINBTN').onclick = doLogin;
+document.getElementById('PW').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
 
 function logout() {
+  document.getElementById('PW').value = '';
   document.getElementById('LOGIN').style.display = 'flex';
   document.getElementById('ADMIN').style.display = 'none';
-  document.getElementById('PW').value = '';
 }
 
-// ═══════════════════════════════════════════════
-//  PANELS
-// ═══════════════════════════════════════════════
 function show(name, btn) {
-  var panels = document.querySelectorAll('.pn');
-  for (var i=0;i<panels.length;i++) panels[i].classList.remove('active');
-  var btns = document.querySelectorAll('.nb');
-  for (var i=0;i<btns.length;i++) btns[i].classList.remove('active');
+  document.querySelectorAll('.pn').forEach(function (p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nb').forEach(function (b) { b.classList.remove('active'); });
   document.getElementById('p-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
   if (name === 'list') loadList();
   if (name === 'dash') loadDash();
-  if (name === 'cfg')  fillCfg();
+  if (name === 'cfg') fillCfg();
 }
 
-// ═══════════════════════════════════════════════
-//  REPO AUTO-DETECT
-// ═══════════════════════════════════════════════
-function initAdmin() {
-  var saved = JSON.parse(localStorage.getItem('__ghcfg__') || '{}');
-  if (saved.owner && saved.repo) {
-    owner = saved.owner; repo = saved.repo; branch = saved.branch || 'main';
-  } else {
-    var host = window.location.hostname;
-    var path = window.location.pathname;
-    if (host.indexOf('.github.io') !== -1) {
-      owner = host.replace('.github.io','');
-      var parts = path.split('/').filter(function(x){return x;});
-      repo = parts.length >= 2 ? parts[0] : host;
-      branch = 'main';
-      saveCfgLocal();
-    }
-  }
-  updateRBox();
-  checkGH();
-  loadDash();
-}
-
-function saveCfgLocal() {
-  localStorage.setItem('__ghcfg__', JSON.stringify({owner:owner,repo:repo,branch:branch}));
-}
-
-function fillCfg() {
-  document.getElementById('CFGO').value = owner;
-  document.getElementById('CFGR').value = repo;
-  document.getElementById('CFGB').value = branch;
-}
-
-function saveCfg() {
-  owner  = document.getElementById('CFGO').value.trim();
-  repo   = document.getElementById('CFGR').value.trim();
-  branch = document.getElementById('CFGB').value.trim() || 'main';
-  if (!owner || !repo) { alert('Owner und Repo eingeben!'); return; }
-  saveCfgLocal();
-  updateRBox();
-  var m = document.getElementById('CFGMSG');
-  setMsg(m,'ld','Teste Verbindung...');
-  testGH().then(function(ok) {
-    setMsg(m, ok?'ok':'er', ok ? '✅ Verbunden!' : '❌ Fehler — Owner/Repo/Token prüfen');
-    if (ok) checkGH();
-  });
-}
-
-function updateRBox() {
-  var b = document.getElementById('RBOX');
-  if (owner && repo) {
-    b.innerHTML = '<strong>' + owner + '/' + repo + '</strong><br><span style="font-size:10px">Branch: ' + branch + '</span>';
-  } else {
-    b.innerHTML = '<span style="color:#EF4444">Nicht erkannt — ⚙ Repo Tab</span>';
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  GITHUB API
-// ═══════════════════════════════════════════════
 function ghH() {
   return {
-    'Authorization': 'token ' + TOKEN,
+    'Authorization': 'Bearer ' + TOKEN,
     'Content-Type': 'application/json',
     'Accept': 'application/vnd.github.v3+json'
   };
 }
 function apiBase() { return 'https://api.github.com/repos/' + owner + '/' + repo; }
 
-function testGH() {
-  return fetch(apiBase(), {headers:ghH()}).then(function(r){return r.ok;}).catch(function(){return false;});
+function saveCfgLocal() { localStorage.setItem('__ghcfg__', JSON.stringify({ owner: owner, repo: repo, branch: branch })); }
+function fillCfg() {
+  document.getElementById('CFGO').value = owner;
+  document.getElementById('CFGR').value = repo;
+  document.getElementById('CFGB').value = branch;
+}
+function saveCfg() {
+  owner = document.getElementById('CFGO').value.trim();
+  repo = document.getElementById('CFGR').value.trim();
+  branch = document.getElementById('CFGB').value.trim() || 'main';
+  if (!owner || !repo) return alert('Owner und Repo eingeben!');
+  saveCfgLocal();
+  updateRBox();
+  var m = document.getElementById('CFGMSG');
+  setMsg(m, 'ld', 'Teste Verbindung...');
+  testGH().then(function (res) {
+    setMsg(m, res.ok ? 'ok' : 'er', res.ok ? '✅ Verbunden!' : '❌ ' + res.msg);
+    if (res.ok) { checkGH(); syncLegacyPostsToGithub(); }
+  });
 }
 
-function checkGH() {
-  var dot = document.getElementById('GD'), txt = document.getElementById('GT');
-  if (!owner || !repo) {
-    dot.className='gd er'; txt.textContent='Repository nicht konfiguriert — ⚙ Repo'; return;
+function detectRepoFromLocation() {
+  var host = (window.location.hostname || '').toLowerCase();
+  var path = (window.location.pathname || '').split('/').filter(Boolean);
+  var out = { owner: '', repo: '' };
+  if (host.endsWith('.github.io')) {
+    out.owner = host.replace('.github.io', '');
+    out.repo = path.length ? path[0] : '';
+  } else if (path.length) {
+    out.repo = path[0];
   }
-  dot.className='gd sp'; txt.textContent='Prüfe Verbindung...';
-  testGH().then(function(ok) {
-    dot.className = 'gd ' + (ok ? 'ok' : 'er');
-    txt.textContent = ok
-      ? '✅ Verbunden mit ' + owner + '/' + repo
-      : '❌ Keine Verbindung — Token oder Repo prüfen';
+  return out;
+}
+
+function bootstrapCfg() {
+  var saved = JSON.parse(localStorage.getItem('__ghcfg__') || '{}');
+  var detected = detectRepoFromLocation();
+  owner = saved.owner || detected.owner || DEFAULT_OWNER;
+  repo = saved.repo || detected.repo || repo;
+  branch = saved.branch || branch || 'main';
+  if (owner && repo) saveCfgLocal();
+}
+
+function updateRBox() {
+  var b = document.getElementById('RBOX');
+  b.innerHTML = owner && repo
+    ? '<strong>' + owner + '/' + repo + '</strong><br><span style="font-size:10px">Branch: ' + branch + '</span>'
+    : '<span style="color:#EF4444">Nicht erkannt — ⚙ Repo Tab</span>';
+}
+
+function testGH() {
+  return fetch(apiBase(), { headers: ghH() })
+    .then(function (r) {
+      if (r.ok) return { ok: true, msg: 'Verbunden mit ' + owner + '/' + repo };
+      return r.json().catch(function () { return {}; }).then(function (e) {
+        return { ok: false, msg: (e.message || 'Fehler — Owner/Repo/Token prüfen') + ' (HTTP ' + r.status + ')' };
+      });
+    })
+    .catch(function () { return { ok: false, msg: 'Netzwerkfehler beim GitHub-Check' }; });
+}
+function checkGH() {
+  var dot = document.getElementById('GD');
+  var txt = document.getElementById('GT');
+  if (!owner || !repo) { dot.className = 'gd er'; txt.textContent = 'Repository nicht konfiguriert — ⚙ Repo'; return; }
+  dot.className = 'gd sp'; txt.textContent = 'Prüfe Verbindung...';
+  testGH().then(function (res) {
+    dot.className = 'gd ' + (res.ok ? 'ok' : 'er');
+    txt.textContent = res.ok ? '✅ Verbunden mit ' + owner + '/' + repo : '❌ ' + res.msg;
   });
+}
+
+function initAdmin() {
+  bootstrapCfg();
+  updateRBox();
+  checkGH();
+  loadDash();
+  syncLegacyPostsToGithub();
 }
 
 function getSHA(path) {
-  return fetch(apiBase()+'/contents/'+path+'?ref='+branch, {headers:ghH()})
-    .then(function(r){ return r.ok ? r.json().then(function(d){return d.sha;}) : null; })
-    .catch(function(){ return null; });
+  return fetch(apiBase() + '/contents/' + path + '?ref=' + branch, { headers: ghH() })
+    .then(function (r) { return r.ok ? r.json().then(function (d) { return d.sha; }) : null; })
+    .catch(function () { return null; });
+}
+function putFile(path, content, msg, sha) {
+  var body = { message: msg, content: btoa(unescape(encodeURIComponent(content))), branch: branch };
+  if (sha) body.sha = sha;
+  return fetch(apiBase() + '/contents/' + path, { method: 'PUT', headers: ghH(), body: JSON.stringify(body) })
+    .then(function (r) {
+      if (!r.ok) return r.json().then(function (e) { throw new Error(e.message || 'GitHub Fehler'); });
+      return r.json();
+    });
+}
+function getPostsJson() {
+  return fetch(apiBase() + '/contents/posts.json?ref=' + branch, { headers: ghH() })
+    .then(function (r) {
+      if (!r.ok) return { list: [], sha: null };
+      return r.json().then(function (d) {
+        var txt = decodeURIComponent(escape(atob((d.content || '').replace(/\n/g, ''))));
+        return { list: JSON.parse(txt || '[]'), sha: d.sha };
+      });
+    })
+    .catch(function () { return { list: [], sha: null }; });
 }
 
-function putFile(path, content, msg, sha) {
-  var body = {message:msg, content:btoa(unescape(encodeURIComponent(content))), branch:branch};
-  if (sha) body.sha = sha;
-  return fetch(apiBase()+'/contents/'+path, {
-    method:'PUT', headers:ghH(), body:JSON.stringify(body)
-  }).then(function(r) {
-    if (!r.ok) return r.json().then(function(e){ throw new Error(e.message||'GitHub Fehler'); });
-    return r.json();
+function mkSlug(t) {
+  var m = { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' };
+  return t
+    .replace(/[äöüß]/g, function (c) { return m[c] || c; })
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+}
+
+function buildPost(title, content, cat, author, date, sl) {
+  var words = content.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
+  var mins = Math.max(1, Math.round(words / 200));
+  var desc = content.replace(/<[^>]+>/g, '').slice(0, 150).replace(/"/g, '&quot;');
+  var dFmt = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+  return '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + title + ' - DeutschBlog</title><meta name="description" content="' + desc + '"><link rel="canonical" href="https://' + owner + '.github.io/' + repo + '/posts/' + sl + '.html"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--red:#C0392B;--dark:#111;--mid:#555;--bg:#F8F6F2;--white:#fff;--border:#E5E0D8}body{font-family:\'Inter\',sans-serif;background:var(--bg);color:var(--dark)}header{background:var(--white);border-bottom:3px solid var(--red);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}.logo{font-family:\'Playfair Display\',serif;font-size:26px;font-weight:900;color:var(--dark);text-decoration:none}.logo span{color:var(--red)}nav a{text-decoration:none;color:var(--mid);font-size:13px;font-weight:500;padding:6px 14px;border-radius:4px;margin-left:4px;transition:all 0.2s}nav a:hover{background:var(--red);color:#fff}.post-hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:60px 24px 50px;text-align:center}.post-cat{display:inline-block;background:var(--red);font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:4px 14px;margin-bottom:20px;font-weight:600}.post-title{font-family:\'Playfair Display\',serif;font-size:48px;font-weight:900;line-height:1.15;letter-spacing:-1.5px;max-width:800px;margin:0 auto 20px}.post-meta{font-size:13px;color:rgba(255,255,255,0.6);letter-spacing:0.5px}.post-meta span{color:rgba(255,255,255,0.9);font-weight:500}.container{max-width:760px;margin:60px auto;padding:0 24px 80px}.article-body{font-size:18px;line-height:1.9;color:#333;font-weight:300}.article-body p{margin-bottom:26px}.article-body h2{font-family:\'Playfair Display\',serif;font-size:32px;font-weight:700;color:var(--dark);margin:48px 0 18px;letter-spacing:-0.5px}.article-body h3{font-size:20px;font-weight:600;color:var(--dark);margin:32px 0 12px}.article-body a{color:var(--red);text-decoration:underline;text-underline-offset:3px}.article-body ul,.article-body ol{padding-left:24px;margin-bottom:24px}.article-body li{margin-bottom:8px;line-height:1.7}blockquote{border-left:4px solid var(--red);padding:20px 28px;margin:36px 0;background:var(--white);font-style:italic;font-size:20px;color:var(--mid)}.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--mid);text-decoration:none;font-size:13px;font-weight:500;margin-bottom:40px;padding:8px 0;border-bottom:1px solid var(--border)}.back-btn:hover{color:var(--red)}footer{background:var(--dark);color:#666;text-align:center;padding:40px 24px}.footer-logo{font-family:\'Playfair Display\',serif;font-size:22px;color:#fff;margin-bottom:12px}.footer-logo span{color:var(--red)}footer p{font-size:13px}footer a{color:#888;text-decoration:none}@media (max-width:720px){.post-title{font-size:35px}}</style></head><body><header><div class="header-inner"><a href="../index.html" class="logo">Deutsch<span>Blog</span></a><nav><a href="../index.html">← Zurück</a><a href="../index.html">Startseite</a></nav></div></header><div class="post-hero"><div class="post-cat">' + cat + '</div><h1 class="post-title">' + title + '</h1><div class="post-meta">Von <span>' + author + '</span> &nbsp;·&nbsp; <span>' + dFmt + '</span> &nbsp;·&nbsp; <span>' + mins + ' Min. Lesezeit</span></div></div><div class="container"><a href="../index.html" class="back-btn">← Alle Artikel</a><div class="article-body"><article>' + content + '</article></div></div><footer><div class="footer-logo">Deutsch<span>Blog</span></div><p>&copy; 2026 DeutschBlog &nbsp;·&nbsp; <a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></p></footer></body></html>';
+}
+
+function syncLegacyPostsToGithub() {
+  if (!owner || !repo) return;
+  var legacy = JSON.parse(localStorage.getItem('db_posts') || localStorage.getItem('__posts__') || '[]');
+  if (!legacy.length) return;
+  var info = document.getElementById('LISTINFO');
+  info.textContent = 'Synchronisiere alte lokale Artikel nach GitHub...';
+
+  getPostsJson().then(function (data) {
+    var list = data.list || [];
+    var bySlug = {};
+    list.forEach(function (p) { bySlug[p.slug] = true; });
+    var chain = Promise.resolve();
+
+    legacy.forEach(function (p) {
+      var slug = p.slug || mkSlug(p.title || ('artikel-' + Date.now()));
+      if (bySlug[slug]) return;
+      var date = p.date || new Date().toISOString();
+      var entry = {
+        slug: slug,
+        title: p.title || 'Ohne Titel',
+        category: p.category || 'Deutschland',
+        author: p.author || 'Redaktion',
+        date: date,
+        excerpt: (p.excerpt || (p.content || '').replace(/<[^>]+>/g, '').slice(0, 140))
+      };
+      bySlug[slug] = true;
+      list.unshift(entry);
+      chain = chain.then(function () {
+        var html = buildPost(entry.title, p.content || '<p>Inhalt aus Legacy-Daten.</p>', entry.category, entry.author, entry.date, slug);
+        return getSHA('posts/' + slug + '.html').then(function (sha) {
+          return putFile('posts/' + slug + '.html', html, 'Migrate legacy: ' + entry.title, sha);
+        });
+      });
+    });
+
+    return chain.then(function () {
+      if (!list.length) return;
+      return putFile('posts.json', JSON.stringify(list, null, 2), 'Migrate legacy local posts', data.sha)
+        .then(function () { localStorage.removeItem('db_posts'); localStorage.removeItem('__posts__'); });
+    });
+  }).then(function () {
+    info.textContent = 'Legacy-Sync abgeschlossen.';
+    loadDash();
+  }).catch(function () {
+    info.textContent = 'Legacy-Sync fehlgeschlagen.';
   });
 }
 
-function getPostsJson() {
-  return fetch(apiBase()+'/contents/posts.json?ref='+branch, {headers:ghH()})
-    .then(function(r) {
-      if (!r.ok) return {list:[], sha:null};
-      return r.json().then(function(d) {
-        var txt = decodeURIComponent(escape(atob(d.content.replace(/
-/g,''))));
-        return {list: JSON.parse(txt), sha: d.sha};
-      });
-    })
-    .catch(function(){ return {list:[], sha:null}; });
-}
-
-// ═══════════════════════════════════════════════
-//  SLUG
-// ═══════════════════════════════════════════════
-function mkSlug(t) {
-  var m = {'ä':'ae','ö':'oe','ü':'ue','Ä':'Ae','Ö':'Oe','Ü':'Ue','ß':'ss','à':'a','á':'a','è':'e','é':'e','ê':'e','ì':'i','í':'i','ò':'o','ó':'o','ù':'u','ú':'u','ç':'c','ñ':'n'};
-  return t.replace(/[äöüÄÖÜßàáèéêìíòóùúçñ]/g, function(c){return m[c]||c;})
-          .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
-}
-
-// ═══════════════════════════════════════════════
-//  BUILD POST HTML  (string concat only)
-// ═══════════════════════════════════════════════
-
-function buildPost(title, content, cat, author, date, sl) {
-  var words = content.replace(/<[^>]+>/g,'').split(' ').length;
-  var mins  = Math.max(1, Math.round(words / 200));
-  var d = new Date(date);
-  var dFmt = d.toLocaleDateString('de-DE', {day:'numeric',month:'long',year:'numeric'});
-  var desc = content.replace(/<[^>]+>/g,'').slice(0,150).replace(/"/g,'&quot;');
-
-  var css = [
-    '*{margin:0;padding:0;box-sizing:border-box}',
-    'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:BG;color:TX;line-height:1.7}',
-    'header{background:CARD;border-bottom:3px solid AC;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}',
-    '.site{text-decoration:none;font-size:20px;font-weight:900;color:TX}',
-    '.site span{color:AC}',
-    '.back{color:AC;text-decoration:none;font-size:13px;font-weight:600}',
-    '.back:hover{text-decoration:underline}',
-    '.hero{background:CARD;border-bottom:1px solid BD;padding:52px 32px}',
-    '.hi{max-width:780px;margin:0 auto}',
-    '.pcat{display:inline-block;background:AC;color:AT;font-size:9px;font-weight:800;letter-spacing:2px;padding:3px 12px;text-transform:uppercase;margin-bottom:14px}',
-    '.ptitle{font-size:42px;font-weight:900;line-height:1.1;margin-bottom:16px;color:TX}',
-    '.pmeta{font-size:12px;color:MT;display:flex;gap:20px;flex-wrap:wrap;padding-top:14px;border-top:1px solid BD}',
-    '.pmeta strong{color:TX}',
-    '.layout{max-width:900px;margin:36px auto;padding:0 32px;display:grid;grid-template-columns:1fr 230px;gap:24px}',
-    '.mc{background:CARD;border:1px solid BD;padding:38px}',
-    '.ab{font-size:17px;line-height:1.9;color:ART}',
-    '.ab p{margin-bottom:22px}',
-    '.ab h2{font-size:26px;font-weight:800;color:TX;margin:42px 0 13px;padding-bottom:8px;border-bottom:1px solid BD}',
-    '.ab h3{font-size:18px;font-weight:700;color:TX;margin:26px 0 9px}',
-    '.ab a{color:AC;text-decoration:none;font-weight:600;border-bottom:1px solid transparent}',
-    '.ab a:hover{border-bottom-color:AC}',
-    '.ab ul,.ab ol{padding-left:22px;margin-bottom:20px}',
-    '.ab li{margin-bottom:6px}',
-    'blockquote{background:BG;border-left:4px solid AC;padding:16px 22px;margin:22px 0;font-style:italic;color:BQ}',
-    '.sb{display:flex;flex-direction:column;gap:13px}',
-    '.wg{background:CARD;border:1px solid BD;padding:16px}',
-    '.wg h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:MT;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid BD}',
-    '.ri{padding:8px 0;border-bottom:1px solid BD;font-size:13px}',
-    '.ri:last-child{border-bottom:none}',
-    '.ri a{color:TX;text-decoration:none;font-weight:600;display:block;margin-bottom:2px;line-height:1.4}',
-    '.ri a:hover{color:AC}',
-    '.ri span{font-size:11px;color:MT}',
-    'footer{background:BG;border-top:1px solid BD;text-align:center;padding:22px;font-size:12px;color:MT;margin-top:50px}',
-    'footer a{color:MT;text-decoration:none;margin:0 8px}',
-    'footer a:hover{color:AC}'
-  ].join('');
-
-  css = css
-    .replace(/BG/g, '#0A1628').replace(/CARD/g, '#0F1F3D').replace(/AC/g, '#CC0000')
-    .replace(/AT/g, '#ffffff').replace(/TX/g, '#ffffff').replace(/MT/g, 'rgba(255,255,255,0.45)')
-    .replace(/BD/g, '#1E3A6E').replace(/ART/g, 'rgba(255,255,255,0.82)').replace(/BQ/g, 'rgba(255,255,255,0.65)');
-
-  var recScript =
-    "fetch('../posts.json')" +
-    ".then(function(r){return r.json()})" +
-    ".then(function(posts){" +
-    "  var rec=document.getElementById('rec');" +
-    "  posts.filter(function(p){return p.slug!=='"+sl+"'}).slice(0,5).forEach(function(p){" +
-    "    var d=document.createElement('div');d.className='ri';" +
-    "    d.innerHTML='<a href=\"'+p.slug+'.html\">'+p.title+'</a><span>'+p.category+'</span>';" +
-    "    rec.appendChild(d);" +
-    "  });" +
-    "}).catch(function(){});";
-
-  var DeutschBlog_HALF1 = 'Deuts';
-  var DeutschBlog_HALF2 = 'chBlog';
-
-  var html = '<!DOCTYPE html>\n' +
-    '<html lang="de">\n<head>\n' +
-    '<meta charset="UTF-8">\n' +
-    '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-    '<title>' + title + ' - DeutschBlog</title>\n' +
-    '<meta name="description" content="' + desc + '">\n' +
-    '<style>' + css + '</style>\n' +
-    '</head>\n<body>\n' +
-    '<header>\n' +
-    '  <a href="../index.html" class="site">' + DeutschBlog_HALF1 + '<span>' + DeutschBlog_HALF2 + '</span></a>\n' +
-    '  <a href="../index.html" class="back">← Alle Artikel</a>\n' +
-    '</header>\n' +
-    '<div class="hero"><div class="hi">\n' +
-    '  <span class="pcat">' + cat + '</span>\n' +
-    '  <div class="ptitle">' + title + '</div>\n' +
-    '  <div class="pmeta">\n' +
-    '    <span>✍ <strong>' + author + '</strong></span>\n' +
-    '    <span>📅 <strong>' + dFmt + '</strong></span>\n' +
-    '    <span>⏱ <strong>' + mins + ' Min.</strong></span>\n' +
-    '  </div>\n' +
-    '</div></div>\n' +
-    '<div class="layout">\n' +
-    '  <div class="mc"><div class="ab">' + content + '</div></div>\n' +
-    '  <aside class="sb"><div class="wg"><h3>Weitere Artikel</h3><div id="rec"></div></div></aside>\n' +
-    '</div>\n' +
-    '<footer>&copy; 2026 DeutschBlog &nbsp;|&nbsp;<a href="../index.html">Home</a>&nbsp;|&nbsp;<a href="#">Impressum</a></footer>\n' +
-    '<' + 'script>' + recScript + '<' + '/script>\n' +
-    '</body></html>';
-  return html;
-}
-
-
-// ═══════════════════════════════════════════════
-//  PUBLISH
-// ═══════════════════════════════════════════════
 function publish() {
   if (!owner || !repo) {
     alert('Repository konfigurieren! (⚙ Repo Tab)');
     show('cfg', document.getElementById('b3'));
     return;
   }
-  var title   = document.getElementById('PT').value.trim();
+  var title = document.getElementById('PT').value.trim();
   var content = document.getElementById('PC').value.trim();
-  if (!title || !content) { alert('Titel und Inhalt erforderlich!'); return; }
-  var cat    = document.getElementById('PCAT').value;
+  if (!title || !content) return alert('Titel und Inhalt erforderlich!');
+  var cat = document.getElementById('PCAT').value;
   var author = document.getElementById('PAU').value || 'Redaktion';
-  var date   = new Date().toISOString();
-  var sl     = editSlug || mkSlug(title);
-
+  var date = new Date().toISOString();
+  var sl = editSlug || mkSlug(title);
   var btn = document.getElementById('PUBBTN');
   var msg = document.getElementById('PUBMSG');
   btn.disabled = true;
-  setMsg(msg,'ld','Schritt 1/2: Artikel wird gespeichert...');
+  setMsg(msg, 'ld', 'Schritt 1/2: Artikel wird gespeichert...');
 
-  var postPath = 'posts/' + sl + '.html';
-  var postHTML = buildPost(title, content, cat, author, date, sl);
-
-  getSHA(postPath).then(function(sha1) {
-    return putFile(postPath, postHTML, (editSlug?'Update: ':'Add: ')+title, sha1);
-  }).then(function() {
-    setMsg(msg,'ld','Schritt 2/2: Index wird aktualisiert...');
-    return getPostsJson();
-  }).then(function(data) {
-    var list = data.list, jsonSha = data.sha;
-    var entry = {slug:sl,title:title,category:cat,author:author,date:date,
-                  excerpt:content.replace(/<[^>]+>/g,'').slice(0,140)};
-    var idx = -1;
-    for (var i=0;i<list.length;i++) { if(list[i].slug===sl){idx=i;break;} }
-    if (idx>=0) list[idx]=entry; else list.unshift(entry);
-    localStorage.setItem('__posts__', JSON.stringify(list));
-    return putFile('posts.json', JSON.stringify(list,null,2), 'Update index: '+title, jsonSha);
-  }).then(function() {
-    setMsg(msg,'ok','✅ Gespeichert! posts/'+sl+'.html');
-    loadDash();
-    editSlug = null;
-    setTimeout(function(){clearEd();}, 3000);
-  }).catch(function(e) {
-    setMsg(msg,'er','❌ '+e.message);
-  }).finally(function() {
-    btn.disabled = false;
-  });
+  getSHA('posts/' + sl + '.html')
+    .then(function (sha) { return putFile('posts/' + sl + '.html', buildPost(title, content, cat, author, date, sl), (editSlug ? 'Update: ' : 'Add: ') + title, sha); })
+    .then(function () { setMsg(msg, 'ld', 'Schritt 2/2: Index wird aktualisiert...'); return getPostsJson(); })
+    .then(function (data) {
+      var list = data.list;
+      var entry = { slug: sl, title: title, category: cat, author: author, date: date, excerpt: content.replace(/<[^>]+>/g, '').slice(0, 140) };
+      var idx = list.findIndex(function (p) { return p.slug === sl; });
+      if (idx >= 0) list[idx] = entry; else list.unshift(entry);
+      return putFile('posts.json', JSON.stringify(list, null, 2), 'Update index: ' + title, data.sha);
+    })
+    .then(function () { setMsg(msg, 'ok', '✅ Gespeichert! posts/' + sl + '.html'); clearEd(); loadDash(); })
+    .catch(function (e) { setMsg(msg, 'er', '❌ ' + e.message); })
+    .finally(function () { btn.disabled = false; });
 }
 
-// ═══════════════════════════════════════════════
-//  LOAD POSTS LIST
-// ═══════════════════════════════════════════════
 function loadList() {
   var el = document.getElementById('LISTROWS');
   var info = document.getElementById('LISTINFO');
   info.textContent = 'Lade von GitHub...';
-  getPostsJson().then(function(data) {
+  getPostsJson().then(function (data) {
     var list = data.list;
-    if (!list.length) {
-      el.innerHTML = '<div class="ep">Noch keine Artikel.</div>';
-      info.textContent = '';
-      return;
-    }
+    if (!list.length) { el.innerHTML = '<div class="ep">Noch keine Artikel.</div>'; info.textContent = ''; return; }
     info.textContent = list.length + ' Artikel auf GitHub';
     var html = '';
-    list.forEach(function(p) {
+    list.forEach(function (p) {
       var d = new Date(p.date).toLocaleDateString('de-DE');
-      var safeSlug  = p.slug.replace(/'/g,"\'");
-      var safeTitle = p.title.replace(/'/g,"\'").replace(/"/g,'&quot;');
-      html += '<div class="tr">' +
-        '<div><div class="trt">' + p.title + '</div>' +
-        '<div class="trs">posts/' + p.slug + '.html</div></div>' +
-        '<div class="trd">' + d + '</div>' +
-        '<div><span class="trc">' + (p.category||'—') + '</span></div>' +
-        '<div class="ra">' +
-          '<button class="eb" onclick="loadEdit('' + safeSlug + '')">✏ Edit</button>' +
-          '<button class="db" onclick="delPost('' + safeSlug + '','' + safeTitle + '')">✕</button>' +
-        '</div></div>';
+      var safeTitle = (p.title || '').replace(/'/g, '&#39;');
+      html += '<div class="tr"><div><div class="trt">' + p.title + '</div><div class="trs">posts/' + p.slug + '.html</div></div>' +
+        '<div class="trd">' + d + '</div><div><span class="trc">' + (p.category || '—') + '</span></div>' +
+        '<div class="ra"><button class="eb" onclick="loadEdit(\'' + p.slug + '\')">✏ Edit</button>' +
+        '<button class="db" onclick="delPost(\'' + p.slug + '\',\'' + safeTitle + '\')">✕</button></div></div>';
     });
     el.innerHTML = html;
-  }).catch(function() {
-    el.innerHTML = '<div class="ep">Ladefehler.</div>';
-  });
+  }).catch(function () { el.innerHTML = '<div class="ep">Ladefehler.</div>'; });
 }
 
 function loadEdit(sl) {
-  getPostsJson().then(function(data) {
-    var p = null;
-    for(var i=0;i<data.list.length;i++) { if(data.list[i].slug===sl){p=data.list[i];break;} }
+  getPostsJson().then(function (data) {
+    var p = data.list.find(function (i) { return i.slug === sl; });
     if (!p) return;
     editSlug = sl;
-    document.getElementById('PT').value   = p.title;
-    document.getElementById('PAU').value  = p.author || 'Redaktion';
+    document.getElementById('PT').value = p.title;
+    document.getElementById('PAU').value = p.author || 'Redaktion';
     document.getElementById('ETITLE').textContent = 'Artikel bearbeiten';
-    document.getElementById('PVSL').textContent   = 'posts/' + sl + '.html';
-    document.getElementById('PVTL').textContent   = p.title;
-    // Try to set category
+    document.getElementById('PVSL').textContent = 'posts/' + sl + '.html';
+    document.getElementById('PVTL').textContent = p.title;
     var sel = document.getElementById('PCAT');
-    for(var i=0;i<sel.options.length;i++) {
-      if (sel.options[i].value === p.category) { sel.selectedIndex=i; break; }
-    }
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === p.category) sel.selectedIndex = i;
     var msg = document.getElementById('PUBMSG');
-    setMsg(msg,'ld','Lade Inhalt...');
-    // Load full content from GitHub
-    fetch(apiBase()+'/contents/posts/'+sl+'.html?ref='+branch, {headers:ghH()})
-      .then(function(r){return r.json();})
-      .then(function(d) {
-        var html = decodeURIComponent(escape(atob(d.content.replace(/
-/g,''))));
-        var m = html.match(/<div class="ab"><div class="ab">([\s\S]*?)<\/div><\/div>/);
-        if (!m) m = html.match(/class="ab">([\s\S]*?)<\/div>\s*<\/div>\s*<aside/);
+    setMsg(msg, 'ld', 'Lade Inhalt...');
+    fetch(apiBase() + '/contents/posts/' + sl + '.html?ref=' + branch, { headers: ghH() })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var html = decodeURIComponent(escape(atob((d.content || '').replace(/\n/g, ''))));
+        var m = html.match(/<article>([\s\S]*?)<\/article>/);
         if (m) document.getElementById('PC').value = m[1].trim();
-        setMsg(msg,'ok','✅ Geladen — jetzt bearbeiten');
-      }).catch(function(){ setMsg(msg,'er','Inhalt nicht geladen'); });
+        setMsg(msg, 'ok', '✅ Geladen — jetzt bearbeiten');
+      }).catch(function () { setMsg(msg, 'er', 'Inhalt nicht geladen'); });
     show('edit', document.getElementById('b1'));
   });
 }
 
 function delPost(sl, title) {
   if (!confirm('Artikel löschen: "' + title + '"?')) return;
-  getSHA('posts/'+sl+'.html').then(function(sha) {
-    if (sha) {
-      return fetch(apiBase()+'/contents/posts/'+sl+'.html', {
-        method:'DELETE', headers:ghH(),
-        body:JSON.stringify({message:'Delete: '+title, sha:sha, branch:branch})
-      });
-    }
-  }).then(function() {
-    return getPostsJson();
-  }).then(function(data) {
-    var upd = data.list.filter(function(p){return p.slug!==sl;});
-    localStorage.setItem('__posts__', JSON.stringify(upd));
-    return putFile('posts.json', JSON.stringify(upd,null,2), 'Remove: '+title, data.sha);
-  }).then(function() {
-    loadList(); loadDash();
-  }).catch(function(e){ alert('Fehler: '+e.message); });
+  getSHA('posts/' + sl + '.html')
+    .then(function (sha) {
+      if (!sha) return null;
+      return fetch(apiBase() + '/contents/posts/' + sl + '.html', { method: 'DELETE', headers: ghH(), body: JSON.stringify({ message: 'Delete: ' + title, sha: sha, branch: branch }) });
+    })
+    .then(function () { return getPostsJson(); })
+    .then(function (data) {
+      var upd = data.list.filter(function (p) { return p.slug !== sl; });
+      return putFile('posts.json', JSON.stringify(upd, null, 2), 'Remove: ' + title, data.sha);
+    })
+    .then(function () { loadList(); loadDash(); })
+    .catch(function (e) { alert('Fehler: ' + e.message); });
 }
 
-// ═══════════════════════════════════════════════
-//  DASHBOARD
-// ═══════════════════════════════════════════════
 function loadDash() {
-  getPostsJson().then(function(data) {
-    var list = data.list;
+  getPostsJson().then(function (data) {
+    var list = data.list || [];
     document.getElementById('ST').textContent = list.length;
     var today = new Date().toDateString();
     var todayCount = 0;
     var cats = {};
-    list.forEach(function(p) {
-      if (new Date(p.date).toDateString()===today) todayCount++;
-      cats[p.category||'?'] = 1;
-    });
+    list.forEach(function (p) { if (new Date(p.date).toDateString() === today) todayCount++; cats[p.category || '?'] = true; });
     document.getElementById('SD').textContent = todayCount;
     document.getElementById('SC').textContent = Object.keys(cats).length;
-    localStorage.setItem('__posts__', JSON.stringify(list));
-  }).catch(function(){});
+  });
 }
 
-// ═══════════════════════════════════════════════
-//  EDITOR UTILS
-// ═══════════════════════════════════════════════
 function clearEd() {
   document.getElementById('PT').value = '';
   document.getElementById('PC').value = '';
@@ -694,35 +583,44 @@ function clearEd() {
   editSlug = null;
 }
 function fmt(tag) {
-  var ta=document.getElementById('PC'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e);
-  ta.value=ta.value.slice(0,s)+'<'+tag+'>'+sel+'</'+tag+'>'+ta.value.slice(e);
+  var ta = document.getElementById('PC');
+  var s = ta.selectionStart;
+  var e = ta.selectionEnd;
+  var sel = ta.value.slice(s, e);
+  ta.value = ta.value.slice(0, s) + '<' + tag + '>' + sel + '</' + tag + '>' + ta.value.slice(e);
 }
 function wrp(tag) {
-  var ta=document.getElementById('PC'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e)||'Text';
-  var w = tag==='ul' ? '<ul>\n  <li>'+sel+'</li>\n</ul>' : '<'+tag+'>'+sel+'</'+tag+'>';
-  ta.value=ta.value.slice(0,s)+w+ta.value.slice(e);
+  var ta = document.getElementById('PC');
+  var s = ta.selectionStart;
+  var e = ta.selectionEnd;
+  var sel = ta.value.slice(s, e) || 'Text';
+  var w = tag === 'ul' ? '<ul>\n  <li>' + sel + '</li>\n</ul>' : '<' + tag + '>' + sel + '</' + tag + '>';
+  ta.value = ta.value.slice(0, s) + w + ta.value.slice(e);
 }
 function ilink() {
-  var url=prompt('URL:'); if(!url)return;
-  var ta=document.getElementById('PC'),s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e)||'Link';
-  ta.value=ta.value.slice(0,s)+'<a href="'+url+'">'+sel+'</a>'+ta.value.slice(e);
+  var url = prompt('URL:');
+  if (!url) return;
+  var ta = document.getElementById('PC');
+  var s = ta.selectionStart;
+  var e = ta.selectionEnd;
+  var sel = ta.value.slice(s, e) || 'Link';
+  ta.value = ta.value.slice(0, s) + '<a href="' + url + '">' + sel + '</a>' + ta.value.slice(e);
 }
-function setMsg(el,type,msg) {
-  if(!el)return;
-  el.className='sm '+type; el.textContent=msg; el.style.display='block';
+function setMsg(el, type, msg) {
+  if (!el) return;
+  el.className = 'sm ' + type;
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-// ═══════════════════════════════════════════════
-//  LIVE PREVIEW
-// ═══════════════════════════════════════════════
-document.getElementById('PT').addEventListener('input', function(e) {
+document.getElementById('PT').addEventListener('input', function (e) {
   var s = mkSlug(e.target.value);
   document.getElementById('PVTL').textContent = e.target.value || '—';
-  document.getElementById('PVSL').textContent = s ? 'posts/'+s+'.html' : 'posts/—';
+  document.getElementById('PVSL').textContent = s ? 'posts/' + s + '.html' : 'posts/—';
 });
-document.getElementById('PC').addEventListener('input', function(e) {
-  var t = e.target.value.replace(/<[^>]+>/g,'').slice(0,80);
-  document.getElementById('PVEX').textContent = t ? t+'...' : '—';
+document.getElementById('PC').addEventListener('input', function (e) {
+  var t = e.target.value.replace(/<[^>]+>/g, '').slice(0, 80);
+  document.getElementById('PVEX').textContent = t ? t + '...' : '—';
 });
 </script>
 </body>
