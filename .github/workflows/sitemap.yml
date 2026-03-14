@@ -24,8 +24,8 @@ jobs:
           cat > generate-sitemap.js << 'EOF'
           const GIST_ID = '42ea11087f40fdba423f8eb0f575ac96';
           const GIST_OWNER = 'Hamzamain-spec';
-          const SITE_ID = 'wandelweise';
-          const BASE_URL = 'https://wandelweise.de';
+          const SITE_ID = 'germansites';
+          const BASE_URL = 'https://blognet.2fine.de';
           
           async function generateSitemap() {
             try {
