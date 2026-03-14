@@ -83,6 +83,6 @@ jobs:
             echo "ℹ️ No changes to sitemap.xml"
           else
             git commit -m "🔄 Update sitemap [automated]"
-            git push https://x-access-token:${{ secrets.PAT }}@github.com/Hamzamain-spec/WandelWeise.git HEAD:main
+            git push https://x-access-token:${{ secrets.PAT }}@github.com/Hamzamain-spec/germansites.git HEAD:main
             echo "✅ Sitemap committed and pushed"
           fi
